@@ -1,4 +1,4 @@
-﻿# Desaier frontend demo
+# Desaier frontend demo
 November 19, 2026 founder-review milestone. Centrally managed creative agency; Academy Coming Soon.
 
 ## Run
@@ -9,15 +9,16 @@ cd frontend
 npm ci
 npm run dev
 ```
-Open http://localhost:3000. For production preview: `npm run build` then `npm run start -- --port 3002`.
+Open http://localhost:3000. For production preview: `npm run build` then `npm run start -- --port 3003`.
 
 ## Checks
 From frontend: `npm run lint`, `npm run typecheck`, `npm run build`.
-With the production preview running on port 3002, run from the repository root:
+With the production preview running on port 3003, run from the repository root:
 
 ```sh
-playwright-cli open http://localhost:3002
+playwright-cli open http://localhost:3003
 playwright-cli run-code --filename=tests/visual-smoke.js
+playwright-cli run-code --filename=tests/motion-smoke.js
 ```
 Playwright CLI and its official skill are installed. Fresh machines can follow https://github.com/microsoft/playwright-cli (`npm install -g @playwright/cli@latest`, then `playwright-cli install --skills`).
 
@@ -40,3 +41,5 @@ All account/project actions are local demonstrations. No authentication, backend
 Lint, TypeScript and production build passed November 17. Production Chrome checks passed across 9 routes at 1440px and 390px, with no horizontal overflow or page errors. Core interactions and reduced motion passed. Screenshots reviewed for homepage and dashboard layout. Other browser engines and physical devices have not been tested. No deployment was requested or performed.
 
 Tooling: Next.js, TypeScript, Tailwind, shadcn/ui and official Playwright CLI. Context7 was absent and omitted; CSS handles motion without GSAP. MITP informed structural progression: https://mitp.md/ro/pagina-acasa/.
+
+Creative refinement: layered interactive ribbon hero, pause control, varied scroll reveals, asymmetric concept gallery, refined services/team layouts and restrained dashboard surfaces. No new dependencies. See docs/VERIFICATION.md for the expanded responsive and motion checks.
