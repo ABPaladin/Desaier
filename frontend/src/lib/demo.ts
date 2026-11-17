@@ -1,0 +1,6 @@
+export const projects = [
+ { name: 'ORA', category: 'Brand identity', description: 'A new rhythm for everyday rituals.', className: 'ora', detail: 'A warm, expressive identity system for a conceptual wellness brand. Strategy, packaging and art direction.' },
+ { name: 'FORM / 01', category: 'Digital experience', description: 'Space for a different perspective.', className: 'form', detail: 'An editorial digital concept for an architecture studio. Experience strategy, interface design and prototyping.' },
+ { name: 'morrow', category: 'Art direction', description: 'The future has a softer side.', className: 'morrow', detail: 'A speculative culture campaign exploring optimism through colour, typography and motion.' },
+];
+export const services = [ ['01', 'Brand strategy & identity', 'Find your point of difference. Give it a voice, a shape and a system.', 'Positioning · Naming · Visual identity · Brand guidelines'], ['02', 'Digital experiences', 'Turn your ambition into intuitive, unmistakable digital experiences.', 'Web design · UX/UI · Design systems · Prototyping'], ['03', 'Creative & motion', 'Make your story move. Build a visual world that people feel.', 'Art direction · Campaigns · Motion design · Social content'] ];
