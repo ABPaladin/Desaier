@@ -1,45 +1,50 @@
-# Desaier frontend demo
-November 19, 2026 founder-review milestone. Centrally managed creative agency; Academy Coming Soon.
+# Desaier
+
+Centrally managed creative agency. Next.js on Vercel, Supabase PostgreSQL/Auth/private Storage, and server-side OpenAI assistance. Deadline: **November 25, 2026**.
+
+The reviewed frontend is preserved. Real workspaces now use authenticated endpoints and database-enforced permissions. Demo workflows live separately at `/demo/client`, `/demo/designer` and `/demo/operator`; marketing concept work and team fixtures remain labeled.
 
 ## Run
-Requires Node.js 20.9+ and npm.
+
+Requires Node.js 22.13+ and npm (validated on Node 24).
 
 ```sh
 cd frontend
 npm ci
-npm run dev
+# Copy .env.example to .env.local and configure it; see docs/SETUP.md.
+npm run dev -- --port 3003
 ```
-Open http://localhost:3000. For production preview: `npm run build` then `npm run start -- --port 3003`.
 
-## Checks
-From frontend: `npm run lint`, `npm run typecheck`, `npm run build`.
-With the production preview running on port 3003, run from the repository root:
+Without configuration, marketing and demos work; real accounts show an unavailable state. Production preview: `npm run build` then `npm run start -- --port 3003`.
+
+## Implemented
+
+- Email/password signup, confirmation, login, recovery, logout; HttpOnly cookie sessions.
+- Client briefs with structured requirements; persistent project status and due dates.
+- Operator staffing, milestones, review, revisions, delivery approval, archive and member access controls.
+- Designer skills, portfolio, language, timezone and availability profiles.
+- Shared conversations, private team notes and project audit history.
+- Private immutable file submissions, with client download access only after operator approval.
+- Operator AI brief analysis and designer suggestions; human decisions, bounded usage, no automatic assignments.
+- SVG brand elements, richer purple accents, preserved responsive sculpture and reduced-motion support.
+
+## Verification
+
+From `frontend`: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`.
+
+Database tests execute the actual migration in embedded PostgreSQL and exercise RLS with separate identities. Browser checks use the existing Playwright CLI:
 
 ```sh
+# From repository root, with the production preview on port 3003:
 playwright-cli open http://localhost:3003
 playwright-cli run-code --filename=tests/visual-smoke.js
 playwright-cli run-code --filename=tests/motion-smoke.js
 ```
-Playwright CLI and its official skill are installed. Fresh machines can follow https://github.com/microsoft/playwright-cli (`npm install -g @playwright/cli@latest`, then `playwright-cli install --skills`).
 
-## Included
-Responsive homepage, services, concept portfolio and illustrative team profiles, Academy Coming Soon, login/register UI, and client/designer/operator previews. Operator assignment and approval, designer submission, client brief submission, portfolio expansion and mobile navigation are interactive.
+For integration checks against the local test provider, see [verification](docs/VERIFICATION.md). The test provider is not application infrastructure.
 
-All account/project actions are local demonstrations. No authentication, backend, file delivery or cross-role persistence is implemented. Use fictional form details. Portfolio and team content are labeled examples, awaiting founder-provided assets.
+## Release state
 
-## Structure
-- `frontend/src/app`: routes and shared styles/layout
-- `frontend/src/components/site.tsx`: navigation, footer and marketing components
-- `frontend/src/components/workspace.tsx`: isolated demo interactions
-- `frontend/src/components/ui`: shadcn/ui primitives
-- `frontend/src/lib/demo.ts`: marketing fixtures for future API replacement
-- `docs`: design, milestone and verification notes
-- `tests/visual-smoke.js`: Playwright CLI browser checks
-- `artifacts`: desktop/mobile screenshots and execution transcript
+Local implementation and integrated tests are complete for the documented agency workflow. **Hosted backend activation and live-provider verification are still pending**: Supabase project/migration, email configuration, Vercel environment variables, first operator, and OpenAI credentials/model. The founder's concept document was recovered; the original detailed MVP acceptance plan is still needed to reconcile any additional requirements.
 
-## Status
-Lint, TypeScript and production build passed November 17. Production Chrome checks passed across 9 routes at 1440px and 390px, with no horizontal overflow or page errors. Core interactions and reduced motion passed. Screenshots reviewed for homepage and dashboard layout. Other browser engines and physical devices have not been tested. No deployment was requested or performed.
-
-Tooling: Next.js, TypeScript, Tailwind, shadcn/ui and official Playwright CLI. Context7 was absent and omitted; CSS handles motion without GSAP. MITP informed structural progression: https://mitp.md/ro/pagina-acasa/.
-
-Creative refinement: layered interactive ribbon hero, pause control, varied scroll reveals, asymmetric concept gallery, refined services/team layouts and restrained dashboard surfaces. No new dependencies. See docs/VERIFICATION.md for the expanded responsive and motion checks.
+Start with the [developer guide](docs/DEVELOPER_GUIDE.md) for database access, setup and day-to-day work. See also the [checklist](docs/MILESTONE.md), [architecture and scope](docs/MVP.md), and [setup](docs/SETUP.md). No production deployment or Git push was performed in this development pass.
