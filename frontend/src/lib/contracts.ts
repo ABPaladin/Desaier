@@ -1,0 +1,12 @@
+export type Role = 'client' | 'designer' | 'operator';
+export type Profile = { id: string; name: string; role: Role; active: boolean; skills: string; bio: string; languages: string; timezone: string; portfolio_url: string; available: boolean };
+export type Project = { id: string; title: string; service: string; brief: string; requirements: Record<string, string>; client_id: string; designer_id: string | null; status: string; due_date: string | null; version: number; created_at: string; updated_at: string };
+export type Comment = { id: string; author_id: string; body: string; internal: boolean; created_at: string };
+export type Task = { id: string; title: string; done: boolean };
+export type Delivery = { id: string; filename: string; approved: boolean; created_at: string };
+export type Event = { id: string; action: string; created_at: string };
+export type AiRun = { id: string; status: string; result: string | null; created_at: string };
+export type WorkspaceData = { profile: Profile; projects: Project[]; members: Profile[]; aiEnabled: boolean };
+export type ProjectDetail = { project: Project; comments: Comment[]; tasks: Task[]; deliveries: Delivery[]; events: Event[]; ai: AiRun[] };
+export const serviceNames = ['Brand strategy & identity', 'Digital experiences', 'Creative & motion'] as const;
+export const statusNames: Record<string, string> = { submitted: 'Brief received', in_progress: 'In progress', in_review: 'Operator review', changes_requested: 'Refinement requested', delivered: 'Approved for delivery', archived: 'Archived' };

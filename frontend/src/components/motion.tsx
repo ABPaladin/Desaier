@@ -1,4 +1,5 @@
-﻿'use client';
+'use client';
+import { Pause, Play } from 'lucide-react';
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -72,6 +73,6 @@ export function LivingSculpture() {
       </div></div>
       <span className="object-label">FIG. 01 / A FORM IN FLUX</span>
     </div>
-    <button className="motion-toggle" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? 'Resume motion' : 'Pause motion'} <span aria-hidden="true">{paused ? '\u25b7' : '\u2016'}</span></button>
+    <button className="motion-toggle" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? 'Resume motion' : 'Pause motion'} {paused ? <Play size={14} aria-hidden="true"/> : <Pause size={14} aria-hidden="true"/>}</button>
   </>;
 }

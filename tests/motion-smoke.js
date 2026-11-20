@@ -15,12 +15,12 @@ async (page) => {
  await page.waitForTimeout(1200);
  await page.locator('.work').first().hover();
  if(await page.locator('.view-project').first().evaluate(el=>Number(getComputedStyle(el).opacity))<.9)await page.waitForTimeout(400);
- await page.screenshot({path:'artifacts/creative-work-hover.png'});
+ await page.screenshot({path:'artifacts/refined-work-hover.png'});
  await page.emulateMedia({reducedMotion:'reduce'});
  if(await body.evaluate(el=>getComputedStyle(el).animationName)!=='none')throw Error('Live reduced motion failed');
  for(const width of [320,768,1024]){
   await page.setViewportSize({width,height:900});
-  for(const route of ['/','/services','/designers','/dashboard/operator']){
+  for(const route of ['/','/services','/designers','/demo/operator']){
    await page.goto('http://localhost:3003'+route);
    if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Overflow '+width+' '+route);
   }
