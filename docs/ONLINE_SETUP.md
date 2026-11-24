@@ -16,14 +16,14 @@ Deschide [Supabase Dashboard](https://supabase.com/dashboard), selectează proie
 
 | Pagina | Ce vezi/faci |
 | --- | --- |
-| SQL Editor → New query | Aplici schema versionată și rulezi verificări administrative |
+| SQL Editor → New query | Rulezi verificări administrative; migrarea inițială se face exclusiv prin CLI |
 | Table Editor → schema public | `profiles`, `projects`, `tasks`, `comments`, `deliveries`, `events`, `ai_runs` |
 | Authentication → Users | Conturile, emailurile confirmate și UUID-urile |
 | Storage → deliverables | Fișierele private; nu transforma bucketul în public |
 | Settings → API Keys | Cheia **publishable**, nu secret/service_role |
 | Connect / Project URL | URL-ul HTTPS al API-ului Supabase, nu connection string PostgreSQL |
 
-Verifică întâi dacă proiectul conține tabele existente. Pentru un proiect gol destinat acestei aplicații, copiază integral `supabase/migrations/202611200001_agency.sql` în SQL Editor și execută **o singură dată**. Fișierul este tranzacțional. Păstrează în jurnalul lansării numele migrației și data aplicării; SQL Editor nu creează automat istoricul CLI. Dacă schema există deja, compar-o înainte de orice reexecutare. Nu șterge date pentru a face migrația să treacă.
+Metoda de activare aleasă de proprietar este acum **CLI oficial, cu autorizare explicită înainte de schema online**. Urmează [DATABASE_ACTIVATION.md](DATABASE_ACTIVATION.md): identificarea proiectului, istoricul, preflight, dry-run, autorizare, db push și verificare. Nu executa migrația prin SQL Editor sau MCP și nu o aplica simultan prin integrarea GitHub. SQL Editor rămâne disponibil pentru citiri administrative și, ulterior, desemnarea autorizată a primului operator.
 
 Verificare administrativă (rezultatul trebuie să includă toate cele șapte tabele cu RLS activ):
 

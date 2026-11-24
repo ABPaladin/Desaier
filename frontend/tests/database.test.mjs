@@ -20,7 +20,23 @@ test('PostgreSQL migration, RLS and transactional agency workflow', async t => {
     alter default privileges in schema public grant all on tables to anon,authenticated;
     alter default privileges in schema public grant execute on functions to anon,authenticated;
   `);
+  const preflight = (await db.query(await readFile(new URL('../../supabase/checks/preflight.sql', import.meta.url), 'utf8'))).rows[0].preflight;
+  assert.deepEqual(preflight.public_tables, []);
+  assert.deepEqual(preflight.deliverables_bucket, []);
+  assert.equal(preflight.migration_history_relation, null);
   await db.exec(await readFile(new URL('../../supabase/migrations/202611200001_agency.sql', import.meta.url), 'utf8'));
+  await t.test('deployment catalog verification detects expected schema and unsafe extra grants', async () => {
+    const sql = await readFile(new URL('../../supabase/checks/verify_agency.sql', import.meta.url), 'utf8');
+    const report = (await db.query(sql)).rows[0].verification;
+    assert.equal(report.catalog_checks_pass, true, JSON.stringify(report));
+    assert.equal(report.tables.length, 7);
+    assert.equal(report.functions.length, 15);
+    assert.equal(report.policies.length, 10);
+    assert.deepEqual(report.additional_policies_to_review, []);
+    await db.exec('grant update on public.projects to authenticated');
+    assert.equal((await db.query(sql)).rows[0].verification.catalog_checks_pass, false);
+    await db.exec('revoke update on public.projects from authenticated');
+  });
   const client = '10000000-0000-4000-8000-000000000001';
   const other = '10000000-0000-4000-8000-000000000002';
   const designer = '10000000-0000-4000-8000-000000000003';

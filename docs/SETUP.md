@@ -4,7 +4,7 @@ Use the existing Vercel project with root directory `frontend`. The local test p
 
 ## Supabase
 
-1. Select the intended Supabase project. Apply `supabase/migrations/202611200001_agency.sql` once using Supabase migrations or the SQL editor. It is transactional and creates Auth profile provisioning, agency tables, RLS, narrow mutation functions and the private `deliverables` bucket. Do not apply blindly over an unrelated existing schema.
+1. Follow [DATABASE_ACTIVATION.md](DATABASE_ACTIVATION.md). The owner selected the official CLI as the single migration method, with verified project identity, history, dry-run and explicit authorization before production schema changes. Apply `supabase/migrations/202611200001_agency.sql` once through CLI; do not also execute it through SQL Editor, MCP or GitHub automation. It creates Auth profile provisioning, agency tables, RLS, narrow mutation functions and the private `deliverables` bucket.
 2. In Auth, enable email/password signup and email confirmation. Set the password minimum to at least 12 characters. Configure production SMTP and verify delivery. Review provider signup/login/email rate limits for expected traffic before launch.
 3. Set Site URL to the exact production origin, and allow the exact development/preview origins you intend to use. Do not allow arbitrary wildcard domains.
 4. Set confirmation email links to `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup` and recovery links to `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery`. These one-use hash links work across devices. For preview testing, use a dedicated staging Auth project with its own Site URL. The handler also supports PKCE code callbacks.

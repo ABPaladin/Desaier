@@ -45,6 +45,8 @@ Final deadline: **November 25, 2026**. Continue the existing project; centrally 
 - [ ] Cross-browser and real-device checks for critical account/upload flows.
 
 ## November 25 — release
+- [x] Prepared official Supabase CLI 3.3.0 configuration, single-method migration runbook and read-only preflight/catalog checks. All 19 local tests pass; migration file remains unchanged.
+- [ ] Database activation awaits CLI login, verified project reference/history and the owner's explicit target-specific schema authorization. No online migration applied by Codex. Do not push while Supabase GitHub deployment behavior is unverified.
 - [ ] Final integrated production smoke, permissions and visual review.
 - [ ] Commit/push release state, verify Vercel deployment and hand over operator setup/runbook.
 

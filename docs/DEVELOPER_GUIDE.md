@@ -21,7 +21,7 @@ Once Supabase is configured, real users and projects live in that Supabase proje
 | --- | --- |
 | Website hosting and deployments | Existing Desaier project in the Vercel dashboard. Root directory: `frontend`. |
 | Database tables | Supabase dashboard → intended project → Table Editor → `public` schema. |
-| SQL migrations and queries | Supabase dashboard → SQL Editor, or the Supabase CLI used by your team. |
+| SQL migrations and queries | Initial migration: official CLI only, following `DATABASE_ACTIVATION.md`. Dashboard SQL Editor is for read-only checks and separately authorized operator setup. |
 | Accounts and email settings | Supabase project → Authentication. |
 | Uploaded files | Supabase project → Storage → private `deliverables` bucket. |
 | Public API URL and publishable key | Supabase project connection/API settings. These populate the two `NEXT_PUBLIC_SUPABASE_*` variables. |
@@ -33,7 +33,7 @@ Dashboard labels can change; use the provider's current documentation for exact 
 ## First-time setup, in order
 
 1. Obtain access to the existing Vercel project and the intended Supabase project. If no Supabase project exists, the agency owner/developer creates one in the correct organization and records its project reference. Do not create unrelated duplicate infrastructure.
-2. Apply the SQL migration once. Confirm the tables and private bucket appear. Do not disable row-level security to work around an error.
+2. Follow `DATABASE_ACTIVATION.md`: verify project identity and history, inspect the dry-run, obtain explicit owner authorization, then apply the SQL migration once through CLI. Confirm tables, policies, functions, history and private bucket. Do not disable RLS to work around an error or execute the same migration through another method.
 3. Configure Supabase email confirmation, production SMTP and the exact site/callback URLs as described in `SETUP.md`.
 4. Copy `frontend/.env.example` to `frontend/.env.local`. Fill in the intended project URL/public key and `APP_ORIGIN`. Add OpenAI variables only when the agency is ready to activate AI. The real `.env.local` is ignored by Git.
 5. Install dependencies and start the app:
