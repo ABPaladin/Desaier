@@ -1,2 +1,14 @@
 # Playwright CLI output (may contain credentials)
 .playwright-cli/
+
+# Credentials and local provider state, at any depth
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.vercel/
+supabase/.temp/
+playwright/.auth/

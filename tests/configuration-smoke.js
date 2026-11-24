@@ -1,5 +1,8 @@
 async (page) => {
   const origin = 'http://localhost:3003';
+  const health = await page.request.get(origin + '/api/health');
+  const healthBody = await health.json();
+  if (health.status() !== 503 || healthBody.configuration !== 'missing_or_invalid' || healthBody.externalServices !== 'not_checked' || !health.headers()['cache-control'].includes('no-store')) throw new Error('Unconfigured health probe must not report readiness');
   await page.context().clearCookies();
   await page.setViewportSize({ width: 390, height: 900 });
   for (const path of ['/login', '/register', '/forgot-password', '/reset-password']) {

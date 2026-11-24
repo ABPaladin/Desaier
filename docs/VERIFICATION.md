@@ -1,5 +1,15 @@
 ﻿# Verification — November 17, 2026
 
+## Latest verification — November 24
+
+Passed lint, TypeScript, 18 tests (including two deployment-configuration tests), production builds with local fixture configuration and with no backend configuration, and npm production audit with zero reported vulnerabilities. Initial test launch was blocked by sandbox access to the OS user profile; the same suite passed outside the sandbox.
+
+Re-ran the complete local MVP browser workflow, 18 route/viewport checks, 12 further layout checks, motion/keyboard checks and unconfigured-account checks. `/api/health` returns uncached 200 for valid configuration and 503 without configuration, always stating that external services are not checked. Updated screenshot evidence in `artifacts/refined-*`, `artifacts/mvp-test-*`, and `artifacts/launch-hero-{desktop,mobile}.png`; visually reviewed both hero viewports. The fixture transport still simulates Auth/Storage and cannot establish hosted readiness.
+
+`node tests/online-smoke.mjs https://YOUR-CANONICAL-DOMAIN` provides read-only deployment checks. It has not been run against production because the actual domain/access is unavailable. Follow the authenticated provider acceptance checklist in [ONLINE_SETUP.md](ONLINE_SETUP.md) before calling the MVP live.
+
+The historical results below describe earlier milestones.
+
 Passed: npm run lint, npm run typecheck, npm run build.
 
 Playwright CLI against production server on port 3002:

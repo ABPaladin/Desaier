@@ -18,7 +18,17 @@ Final deadline: **November 25, 2026**. Continue the existing project; centrally 
 - [x] Lint, TypeScript, build, PostgreSQL authorization tests, browser integration and motion/visual checks.
 - [x] Dependency audit patched to zero reported vulnerabilities.
 - [x] Setup instructions, reproducible tests and explicit verification limits.
-- [x] Implementation committed locally as `a6c67ad`; developer handoff included in the following documentation commit. No push/deployment yet.
+- [x] Implementation committed as `a6c67ad`; developer handoff in `6981a7a`. Both pushed to `origin/main` on November 24 after credential-pattern and tracked-file review.
+
+## November 24 — deployment preparation and visual refinement
+- [x] Actual architecture audited: Next.js API routes + Supabase, deployable together on Vercel; no Spring Boot or additional Java hosting required.
+- [x] Romanian `ONLINE_SETUP.md`: accounts, database access, migration, SMTP, exact variables, operator bootstrap, live acceptance and blockers.
+- [x] Fail-closed configuration validation and build guard against privileged public keys, invalid origins and hosted local fixtures.
+- [x] Uncached `/api/health` configuration probe and read-only `tests/online-smoke.mjs`; neither falsely claims hosted-provider readiness.
+- [x] Richer orchid/amethyst sculpture, violet section lighting, lavender portfolio treatment and differentiated service hover accents.
+- [x] Final local verification: lint, TypeScript, 18 tests, both build configurations, full workflow browser check, 30 layout checks, motion/keyboard checks and dependency audit. Evidence in `VERIFICATION.md`.
+- [x] Preparation milestone verified and ready for Git synchronization; cloud activation remains a separate pending milestone.
+- [ ] Obtain the canonical Vercel URL and authorized provider access; GitHub exposes no deployment URL. Cloud migration, SMTP and real AI remain unverified.
 
 ## November 21–22 — hosted integration (pending access)
 - [ ] Identify/provision the intended Supabase project; apply migration and verify RLS on hosted PostgreSQL.

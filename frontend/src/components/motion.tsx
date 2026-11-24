@@ -65,7 +65,7 @@ export function LivingSculpture() {
         <svg viewBox="0 0 700 700" fill="none">
           <defs>
             <linearGradient id="ribbon" x1="130" y1="130" x2="570" y2="580" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#f3dcff"/><stop offset=".2" stopColor="#bca0f5"/><stop offset=".42" stopColor="#7136c1"/><stop offset=".65" stopColor="#30145e"/><stop offset=".82" stopColor="#b58aee"/><stop offset="1" stopColor="#ead4ff"/>
+              <stop stopColor="#f5e3ff"/><stop offset=".18" stopColor="#dca4f5"/><stop offset=".36" stopColor="#ab61ed"/><stop offset=".54" stopColor="#4f2396"/><stop offset=".7" stopColor="#b755b8"/><stop offset=".86" stopColor="#a8a0fa"/><stop offset="1" stopColor="#f5c4e2"/>
             </linearGradient>
           </defs>
           {Array.from({length: 32}, (_, i) => <ellipse key={i} cx="350" cy="350" rx={225 - i * 2.3} ry={125 + i * 2.2} transform={`rotate(${i * 5.5} 350 350)`} stroke="url(#ribbon)" strokeWidth="9" />)}

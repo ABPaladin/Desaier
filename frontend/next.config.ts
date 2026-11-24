@@ -1,4 +1,10 @@
 import type { NextConfig } from "next";
+import { validBackendConfig } from './src/lib/backend-config';
+
+if ([process.env.APP_ORIGIN, process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY].some(Boolean)
+  && !validBackendConfig(process.env)) {
+  throw new Error('Invalid backend configuration. Set all three backend variables, canonical HTTPS origins and a publishable/anon key. See docs/ONLINE_SETUP.md.');
+}
 
 const nextConfig: NextConfig = {
   async headers() {

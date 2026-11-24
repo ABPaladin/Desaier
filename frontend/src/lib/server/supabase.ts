@@ -3,9 +3,10 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { AppError } from '@/lib/validation';
 import type { Profile } from '@/lib/contracts';
+import { validBackendConfig } from '@/lib/backend-config';
 
 export function backendConfigured() {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && process.env.APP_ORIGIN);
+  return validBackendConfig(process.env);
 }
 export async function database() {
   if (!backendConfigured()) throw new AppError('The workspace is not available yet. Please try again later.', 503);
