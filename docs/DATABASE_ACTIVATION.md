@@ -5,8 +5,10 @@ Metoda aleasă: **Supabase CLI 3.3.0**, din rădăcina repository-ului. MCP răm
 ## Starea verificată local
 
 - `supabase init` a creat numai configurația locală, fără proiect cloud sau Docker.
-- CLI disponibil: `3.3.0`. Autentificarea CLI lipsește (`AccessTokenRequiredError`). MCP Supabase nu este încă disponibil în această sesiune.
-- Referința proiectului și istoricul remote nu sunt încă verificate. Schema goală este raportată de proprietar, nu confirmată prin acces direct.
+- CLI disponibil și autentificat: `3.3.0`. MCP Supabase nu este încă disponibil în această sesiune; citirile au folosit CLI `--read-only`.
+- Țintă verificată: **Desair**, ref `oueolnrsoicnamrkxawc`, organizație `fhajerdziizyqfihlifk`, regiune `eu-west-1`, environment **production**, PostgreSQL 17.12, status `ACTIVE_HEALTHY`. Referința corespunde URL-ului furnizat de proprietar și checkoutului legat local.
+- Istoric verificat: versiunea `202611200001` apare numai local; remote gol. Preflight: zero tabele/funcții publice, zero politici Storage, fără triggerul aplicației, fără bucket `deliverables`, fără relația de istoric a migrărilor.
+- Dry-run reușit: numai `202611200001_agency.sql`, fără seeds sau roles. **Aplicarea reală așteaptă autorizarea explicită a proprietarului.**
 - Migrația unică: `supabase/migrations/202611200001_agency.sql`, versiunea `202611200001`.
 - SHA-256 al fișierului local revizuit: `F2FE7522BD71C0FB3FD84D3B20C4B22FF6EF2008F2AABFEF4862BA8F3B8A6CA4`. Hashul identifică octeții locali; CRLF/LF poate produce alt hash după checkout. Recalculează înainte de autorizare.
 - Efecte: șapte tabele, șapte politici RLS publice, trei politici Storage, 15 funcții (nouă RPC-uri de lucru + șase funcții auxiliare/trigger), trigger Auth și bucket privat de 20 MB.
