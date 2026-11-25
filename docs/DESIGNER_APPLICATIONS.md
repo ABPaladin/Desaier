@@ -1,6 +1,6 @@
 # Designer applications — November 26, 2026
 
-Implemented and verified locally; production migration and rollout are pending.
+Published and verified on the canonical production site. Owner explicitly authorized publication on November 26; migration `202611260001` was applied and verified before pushing frontend release `88d5a84`. Vercel desaier-cjyd succeeded; read-only browser checks confirmed desktop/mobile signup choices, approval copy and navigation. See MILESTONE.md for deployment evidence and remaining real-account acceptance.
 
 ## Behavior
 
@@ -10,9 +10,9 @@ Operators approve or decline in People & access. Decisions record a review time.
 
 Production preflight found **zero active operators**. The owner must bootstrap an operator through trusted administration (see ONLINE_SETUP.md); this migration does not promote anyone. Keep the owner account as operator and use a separate account to test designer applications.
 
-## Exact migration awaiting authorization
+## Authorized migration record
 
-Follow [DATABASE_ACTIVATION.md, section 2](DATABASE_ACTIVATION.md#2-punct-obligatoriu-de-autorizare). Earlier permission to deploy visual changes did not identify this schema migration.
+The owner approved this exact migration and publication after receiving the review below, satisfying [DATABASE_ACTIVATION.md, section 2](DATABASE_ACTIVATION.md#2-punct-obligatoriu-de-autorizare). The table records the pre-application state; do not reapply it.
 
 | Item | Reviewed value |
 | --- | --- |
@@ -29,7 +29,7 @@ The transaction adds `designer_application_status` and `designer_application_rev
 
 Read-only preflight confirmed the new columns/RPC do not exist and profile RLS and the Auth trigger are enabled. No personal records were inspected or changed; operator availability was checked as an aggregate count.
 
-## Rollout after authorization
+## Rollout procedure (migration completed)
 
 1. Recheck hash, linked target, remote history and dry run. Do not push the frontend first: its operator query needs the new columns.
 2. Apply once with `npx.cmd --yes supabase@3.3.0 db push --remote=oueolnrsoicnamrkxawc --skip-vault --yes`. No reset, seeds, include-all or second deployment mechanism.
@@ -41,4 +41,4 @@ Frontend rollback baseline: `83bbaed325ec422b57b7025f06c96211d0201f9d`. The addi
 
 ## Local verification
 
-Lint, TypeScript, production build and 22 tests passed. Playwright passed signup/review, all-role navigation and the complete agency workflow. Desktop/mobile screenshots in `artifacts/designer-*` were inspected, with no horizontal overflow. PostgreSQL runs actual migrations/RLS; Auth/Storage transport and email confirmation are local fixtures. No production schema/account mutation or Git push was performed for this milestone.
+Lint, TypeScript, production build and 22 tests passed. Playwright passed signup/review, all-role navigation and the complete agency workflow. Desktop/mobile screenshots in `artifacts/designer-*` were inspected, with no horizontal overflow. PostgreSQL runs actual migrations/RLS; Auth/Storage transport and email confirmation are local fixtures. These local checks preceded publication. After owner approval, production migration history matched both local versions; `catalog_checks_pass=true`, all 16 functions and original ten policies verified, no additional policies. No real account roles were changed.
