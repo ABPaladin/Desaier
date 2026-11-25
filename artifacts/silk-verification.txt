@@ -1,0 +1,5 @@
+PASS: lint, TypeScript, production build and 20 application/PostgreSQL authorization tests.
+PASS: refinement-motion-browser.js: actual surface morphing, pause/resume phase continuity, offscreen pause, initial/live reduced motion, four viewport widths, scroll storytelling and no hydration/page errors.
+PASS: navigation-browser.js: guest/client/designer/operator login, server identity, refresh, dashboard/profile links, keyboard/outside-click/touch menu, logout and cross-tab logout; isolated local demo provider.
+PASS: motion-smoke.js and visual-smoke.js: 30 responsive public/demo route checks, pointer response, offscreen suspension, reduced motion, portfolio and form interactions.
+Reviewed desktop, mobile and three timed sculpture poses. Production acceptance runs after GitHub main triggers Vercel.

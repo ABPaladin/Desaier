@@ -65,3 +65,11 @@ Academy enrollment and payments are not inferred from the concept document. Acad
 - [x] Asymmetric 24-path ribbon with three independent transform layers, richer orchid/amethyst lighting, pointer response, pause/offscreen suspension and reduced motion. Varied public text/artwork/service/process reveals, scroll accents and animated portfolio expansion; dashboards remain calm. No new dependencies.
 - [x] Lint, TypeScript, 20 authorization/configuration/validation tests and production build. Targeted navigation/session/motion browser checks; existing complete agency workflow and 30 responsive checks. Updated desktop/mobile screenshots inspected. Evidence and limits in `docs/VERIFICATION.md`.
 - [ ] Deploy this reviewed local milestone, then perform authenticated acceptance against the live provider. No Git push, Vercel deployment, production migration or policy change was made for this task.
+
+## November 26 — single satin sculpture and authorized production rollout
+
+- [x] Replaced the multi-line vortex with one continuous, softly shaded sculpture. Native SVG morphing changes its silhouette and aperture over 21 seconds; restrained CSS float and pointer response preserve the existing hero composition.
+- [x] Removed orbital decoration, improved desktop/mobile proportions and retained pause, offscreen/hidden-tab suspension and initial/live reduced-motion support. No dependencies or authentication/database/infrastructure changes.
+- [x] Fixed an observed scroll-animation hydration warning by controlling paused Web Animations rather than mutating server-rendered style attributes.
+- [x] Lint, TypeScript, production build, 20 authorization/application tests, all-role navigation/login/logout checks and targeted sculpture/motion/responsive checks passed. Reviewed desktop, mobile and three animation poses.
+- Production push and automatic Vercel rollout explicitly authorized by the owner. Previous successful production baseline: `2d3f8d5805f476e100a0f8deca8af7c3dc936dbb`, Vercel project `desaier-cjyd`. Verify this exact target and canonical homepage after push; retain the baseline for rollback if a serious regression appears.

@@ -1,5 +1,6 @@
 'use client';
 import { Pause, Play } from 'lucide-react';
+import { SilkSculpture } from '@/components/silk-sculpture';
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -38,26 +39,48 @@ export function MotionDirector() {
     document.querySelectorAll('.section-head h2, .manifesto h2, .hero-line, .process h2, .academy h2, .footer-top h2, .work, .services article, .three article, .person, .intro h1').forEach(el => observer.observe(el));
     const chapters = Array.from(document.querySelectorAll<HTMLElement>('.manifesto, .process, .discipline-band'));
     let frame = 0;
+    const scrollEffects: { chapter: HTMLElement; animation: Animation }[] = [];
+    const prepareScroll = () => {
+      scrollEffects.splice(0).forEach(({ animation }) => animation.cancel());
+      for (const chapter of chapters) {
+        const targets = chapter.matches('.manifesto') ? chapter.querySelectorAll('.manifesto-seal')
+          : chapter.matches('.discipline-band') ? chapter.querySelectorAll(':scope > span') : [chapter];
+        for (const target of targets) {
+          const seal = chapter.matches('.manifesto'), process = chapter.matches('.process');
+          const animation = target.animate(
+            process ? [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }]
+              : seal ? [{ transform: 'translateY(25px) rotate(-8deg)' }, { transform: 'translateY(-25px) rotate(-8deg)' }]
+              : [{ transform: 'translateX(-12px)' }, { transform: 'translateX(12px)' }],
+            { duration: 1000, fill: 'both', ...(process ? { pseudoElement: '::before' } : {}) }
+          );
+          animation.id = 'desaier-scroll'; animation.pause();
+          scrollEffects.push({ chapter, animation });
+        }
+      }
+    };
     const paint = () => {
       frame = 0;
       if (preference.matches) return;
-      for (const chapter of chapters) {
+      for (const { chapter, animation } of scrollEffects) {
         const box = chapter.getBoundingClientRect();
         const progress = Math.min(1, Math.max(0, (innerHeight - box.top) / (innerHeight + box.height * .4)));
-        chapter.style.setProperty('--journey', String(progress));
+        animation.currentTime = progress * 1000;
       }
     };
     const scroll = () => { if (!frame && !preference.matches) frame = requestAnimationFrame(paint); };
     const stop = () => {
-      if (preference.matches) { animations.forEach(a => a.cancel()); chapters.forEach(el => el.style.removeProperty('--journey')); }
-      else scroll();
+      if (preference.matches) {
+        animations.forEach(a => a.cancel());
+        scrollEffects.splice(0).forEach(({ animation }) => animation.cancel());
+      } else { prepareScroll(); scroll(); }
     };
+    if (!preference.matches) prepareScroll();
     window.addEventListener('scroll', scroll, { passive: true });
     window.addEventListener('resize', scroll);
     scroll();
     preference.addEventListener('change', stop);
     return () => {
-      observer.disconnect(); animations.forEach(a => a.cancel()); cancelAnimationFrame(frame);
+      observer.disconnect(); animations.forEach(a => a.cancel()); scrollEffects.forEach(({ animation }) => animation.cancel()); cancelAnimationFrame(frame);
       window.removeEventListener('scroll', scroll); window.removeEventListener('resize', scroll);
       preference.removeEventListener('change', stop);
     };
@@ -67,18 +90,40 @@ export function MotionDirector() {
 
 export function LivingSculpture() {
   const ref = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
   const [paused, setPaused] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      el.classList.toggle('offstage', !entry.isIntersecting);
-    });
+    const svg = el.querySelector<SVGSVGElement>('svg');
+    if (!svg) return;
+    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    let onstage = true;
+    function sync() {
+      const stopped = paused || !onstage || document.hidden || preference.matches;
+      el!.classList.toggle('offstage', !onstage);
+      el!.classList.toggle('tab-hidden', document.hidden);
+      if (stopped) svg!.pauseAnimations();
+      else {
+        if (!started.current) {
+          svg!.querySelectorAll<SVGAnimationElement>('animate').forEach(animation => animation.beginElement());
+          started.current = true;
+        }
+        svg!.unpauseAnimations();
+      }
+      if (preference.matches) svg!.setCurrentTime(0);
+    }
+    const observer = new IntersectionObserver(([entry]) => { onstage = entry.isIntersecting; sync(); });
     observer.observe(el);
-    const visibility = () => el.classList.toggle('tab-hidden', document.hidden);
-    document.addEventListener('visibilitychange', visibility);
-    return () => { observer.disconnect(); document.removeEventListener('visibilitychange', visibility); };
-  }, []);
+    sync();
+    document.addEventListener('visibilitychange', sync);
+    preference.addEventListener('change', sync);
+    return () => {
+      observer.disconnect(); svg.pauseAnimations();
+      document.removeEventListener('visibilitychange', sync);
+      preference.removeEventListener('change', sync);
+    };
+  }, [paused]);
   return <>
     <div ref={ref} className={`living-field ${paused ? 'paused' : ''}`} aria-hidden="true"
       onPointerMove={e => {
@@ -89,50 +134,10 @@ export function LivingSculpture() {
         e.currentTarget.style.setProperty('--light-x', `${Math.min(85, Math.max(15, (e.clientX - box.left) / box.width * 100))}%`);
       }}
       onPointerLeave={e => { e.currentTarget.style.setProperty('--drift-x', '0px'); e.currentTarget.style.setProperty('--drift-y', '0px'); }}>
-      <div className="aurora" /><div className="sculpture-halo" />
-      <div className="orbital orbital-one" /><div className="orbital orbital-two" />
-      <div className="sculpture"><div className="ribbon-body">
-        <svg viewBox="0 0 700 700" fill="none" focusable="false">
-          <defs>
-            <linearGradient id="ribbon" x1="130" y1="130" x2="570" y2="580" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#f5e3ff"/><stop offset=".18" stopColor="#dca4f5"/><stop offset=".36" stopColor="#ab61ed"/><stop offset=".54" stopColor="#4f2396"/><stop offset=".7" stopColor="#b755b8"/><stop offset=".86" stopColor="#a8a0fa"/><stop offset="1" stopColor="#f5c4e2"/>
-            </linearGradient>
-            <linearGradient id="ribbon-edge" x1="500" y1="140" x2="170" y2="550" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#f8e5ff"/><stop offset=".35" stopColor="#cf8ef5"/><stop offset=".65" stopColor="#7539c9"/><stop offset="1" stopColor="#ea90cf"/>
-            </linearGradient>
-          </defs>
-          {[0, 1, 2].map(layer => <g key={layer} className={`ribbon-layer ribbon-layer-${layer}`}>
-            {Array.from({ length: 8 }, (_, i) => {
-              const index = layer * 8 + i;
-              return <path key={index} d={ribbonPath(index)} stroke={layer === 2 ? 'url(#ribbon-edge)' : 'url(#ribbon)'} strokeWidth={layer === 0 ? 8 : 5.5} strokeLinecap="round" opacity={.72 + i * .035}/>;
-            })}
-          </g>)}
-        </svg>
-      </div></div>
+      <div className="aurora" />
+      <div className="sculpture"><div className="ribbon-body"><SilkSculpture/></div></div>
       <span className="object-label">FIG. 01 / A FORM IN FLUX</span>
     </div>
     <button className="motion-toggle" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? 'Resume motion' : 'Pause motion'} {paused ? <Play size={14} aria-hidden="true"/> : <Pause size={14} aria-hidden="true"/>}</button>
   </>;
-}
-
-// Closed cubic curves form an asymmetric folded ribbon. Fixed geometry keeps
-// motion on transforms rather than rebuilding or filtering paths every frame.
-function ribbonPath(index: number) {
-  const count = 16;
-  const phase = index * .105;
-  const points = Array.from({ length: count }, (_, step) => {
-    const t = step / count * Math.PI * 2;
-    const radius = 194 + 32 * Math.sin(3 * t + phase) + 18 * Math.cos(2 * t - phase);
-    const x = Math.cos(t) * (radius + index * 1.1);
-    const y = Math.sin(t) * (124 + index * 3.1) + 30 * Math.sin(2 * t + phase);
-    const tilt = -.48 + index * .042;
-    return [350 + x * Math.cos(tilt) - y * Math.sin(tilt), 350 + x * Math.sin(tilt) + y * Math.cos(tilt)];
-  });
-  const pair = (p: number[]) => p.map(n => n.toFixed(2)).join(' ');
-  let d = `M${pair(points[0])}`;
-  for (let i = 0; i < count; i++) {
-    const a = points[(i + count - 1) % count], b = points[i], c = points[(i + 1) % count], e = points[(i + 2) % count];
-    d += ` C${pair(b.map((n, axis) => n + (c[axis] - a[axis]) / 6))} ${pair(c.map((n, axis) => n - (e[axis] - b[axis]) / 6))} ${pair(c)}`;
-  }
-  return d + ' Z';
 }

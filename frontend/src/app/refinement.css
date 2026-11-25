@@ -26,20 +26,15 @@ nav .profile-panel a::after { display: none; }
 .hero em { color: #ead5fb; }
 .motion-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
 .living-field { --light-x: 65%; }
-.aurora { background: radial-gradient(ellipse at var(--light-x) 40%, #d878c73b, #7b46d826 42%, transparent 68%); animation-duration: 17s; }
-.sculpture-halo { position: absolute; inset: 23% 13% 29%; border-radius: 50%; background: radial-gradient(ellipse, #ae65d02b, transparent 70%); transform: rotate(-28deg); }
-.sculpture .ribbon-body { animation: ribbon-float 23s ease-in-out infinite alternate; }
-.ribbon-body svg { animation: ribbon-breathe 19s ease-in-out infinite alternate; filter: drop-shadow(0 24px 15px #09031180); }
-.ribbon-layer { transform-origin: 350px 350px; }
-.ribbon-layer-0 { animation: ribbon-fold 13s ease-in-out infinite alternate; }
-.ribbon-layer-1 { animation: ribbon-fold 17s -6s ease-in-out infinite alternate-reverse; }
-.ribbon-layer-2 { animation: ribbon-unfold 21s -9s ease-in-out infinite alternate; }
-.orbital { opacity: .45; border-color: #c39df324; }
-.orbital-two { border-style: solid; opacity: .2; }
-@keyframes ribbon-float { 0% { transform: translate(-1%, 1%) rotate(-10deg); } 44% { transform: translate(1%, -2%) rotate(-3deg); } 100% { transform: translate(-2%, 0) rotate(6deg); } }
-@keyframes ribbon-breathe { 0% { transform: scale(.94, 1.03); } 58% { transform: scale(1.03, .96); } 100% { transform: scale(.98, 1.05); } }
-@keyframes ribbon-fold { 0% { transform: rotate(-5deg) skewY(-4deg) scale(1, .92); } 47% { transform: rotate(3deg) skewY(2deg) scale(.96, 1.04); } 100% { transform: rotate(7deg) skewY(-1deg) scale(1.04, 1); } }
-@keyframes ribbon-unfold { 0% { transform: rotate(6deg) skewX(-4deg) scale(.97, 1.02); } 54% { transform: rotate(-4deg) skewX(3deg) scale(1.04, .96); } 100% { transform: rotate(-7deg) skewX(-2deg) scale(.96, 1.07); } }
+.aurora { inset: 8% -5% 8% 0; width: auto; height: auto; border-radius: 0; background: radial-gradient(ellipse at var(--light-x) 48%, #a86fce20, transparent 64%); animation-duration: 17s; }
+.sculpture { top: 28px; right: 0; width: min(52vw, 750px); }
+.sculpture .ribbon-body { animation: silk-float 16s ease-in-out infinite alternate; }
+.ribbon-body svg { animation: none; filter: drop-shadow(0 32px 24px #09031160); }
+.object-label { bottom: 18%; color: #c3acd6; }
+@keyframes silk-float { from { transform: translateY(7px) rotate(-3deg); } to { transform: translateY(-9px) rotate(2deg); } }
+@media (max-width: 800px) {
+  .sculpture { width: 440px; max-width: 112vw; right: -8%; top: 16px; }
+}
 .discipline-band { background: linear-gradient(105deg, #28163e, #40204c 55%, #28163e); }
 .discipline-band > span { transform: translateX(calc((var(--journey, .5) - .5) * 24px)); }
 .manifesto { background: radial-gradient(ellipse at 5% 95%, #c693d46b, transparent 65%), #e8dcf4; }
