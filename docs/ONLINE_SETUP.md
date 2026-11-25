@@ -54,6 +54,16 @@ Confirmarea și recuperarea conturilor sunt implementate. Notificările de proie
 
 ## 4. Vercel: publicarea frontendului și backendului
 
+Valorile confirmate pentru proiectul actual (25 noiembrie):
+
+| Variabilă Production | Valoare |
+| --- | --- |
+| `APP_ORIGIN` | `https://desaier-cjyd.vercel.app` |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://oueolnrsoicnamrkxawc.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Copiază cheia **publishable** din proiectul `oueolnrsoicnamrkxawc` → Settings → API Keys; nu secret/service_role |
+
+Nu adăuga slash final la primele două valori. Site URL din Supabase Auth trebuie să fie tot `https://desaier-cjyd.vercel.app`. După salvare în Vercel, redeploy Production; nu este necesară reaplicarea migrației. Health-ul actual este 503 `missing_or_invalid`, deci conectarea aplicației nu este încă finalizată. Cheile AI sunt opționale pentru activarea fluxului de bază.
+
 Deschide proiectul **existent** din [Vercel Dashboard](https://vercel.com/dashboard):
 
 1. Settings → Git: repository `ABPaladin/Desaier`, production branch `main`.
@@ -79,8 +89,13 @@ Buildul refuză configurația parțială, origini nevalide și chei privilegiate
 Înregistrează și confirmă contul proprietarului pe site. În Supabase → Authentication → Users verifică emailul și copiază UUID-ul exact. În SQL Editor:
 
 ```sql
-update public.profiles set role = 'operator'
-where id = '<UUID-ul verificat al proprietarului>';
+update public.profiles p set role = 'operator'
+from auth.users u
+where p.id = u.id
+  and u.id = '<UUID-ul verificat al proprietarului>'
+  and u.email_confirmed_at is not null
+  and p.active and p.role = 'client'
+returning p.id, p.role;
 ```
 
 Verifică faptul că s-a actualizat exact un rând. Conturile noi sunt clienți indiferent de metadatele signup. Designerul se înregistrează și confirmă emailul; operatorul îl desemnează din People & access înainte să aibă istoric de proiect. Utilizatorii nu își aleg roluri de personal.
@@ -120,6 +135,6 @@ Vercel → Logs pentru funcțiile API; Supabase → Logs pentru Auth/Postgres/St
 
 Simulările sunt numai în `/demo/*` și harnessul de test. Portofoliul și echipa publică au conținut ilustrativ etichetat. Notificările automate de proiect, realtime, scanarea malware, plățile și înscrierea Academy nu sunt implementate. Modelul actual permite un designer atribuit per proiect. Cerințele suplimentare trebuie reconciliate cu planul original, care nu a fost găsit integral.
 
-**Blocaje la momentul auditului:** proiectul Supabase și migrația cloud neconfirmate, lipsă acces la configurația Vercel și URL-ul public în această sesiune, SMTP/domeniu neconfirmate, cheie/model OpenAI neconfigurate. Codul și testele locale nu sunt dovadă de deployment complet funcțional.
+**Stare actualizată, 25 noiembrie:** migrația Supabase este aplicată și verificată online; domeniul Vercel este cunoscut. Vercel raportează configurație lipsă/nevalidă, iar modificarea variabilelor necesită acces la dashboard. SMTP/domeniul expeditor, confirmarea emailurilor, primul operator și cheia/modelul OpenAI rămân neconfirmate. Catalogul bazei verificat nu este dovadă că întregul flux online funcționează.
 
 Dezvoltare locală și harta codului: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md). Teste reproductibile: [VERIFICATION.md](VERIFICATION.md). Progres: [MILESTONE.md](MILESTONE.md).

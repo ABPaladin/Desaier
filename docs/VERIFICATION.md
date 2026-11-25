@@ -2,6 +2,10 @@
 
 ## Latest verification — November 24
 
+Update November 25: applied unchanged migration `202611200001` once to authorized production project `oueolnrsoicnamrkxawc` with official CLI 3.3.0. Remote migration history matches local. `supabase/checks/verify_agency.sql` ran read-only on hosted PostgreSQL and returned `catalog_checks_pass=true`, seven tables/RLS, 15 function checks, ten policies, valid Auth trigger and private bucket, no additional policies. Re-ran all 19 local tests, lint, TypeScript and build successfully.
+
+The online smoke test now targets the owner's confirmed `https://desaier-cjyd.vercel.app`. Homepage passed; configuration check failed with HTTP 503. Direct health inspection confirmed `application: ok`, `configuration: missing_or_invalid`, `externalServices: not_checked`, and `Cache-Control: private, no-store`. A live Chromium check of `/login` confirmed the preparation notice and disabled email/password/submit controls. This identifies pending Vercel configuration/redeploy; it does not invalidate the successful database migration. No real-account signup, email, Storage transfer or paid AI test was performed in this pass. Earlier results follow.
+
 Passed lint, TypeScript, 18 tests (including two deployment-configuration tests), production builds with local fixture configuration and with no backend configuration, and npm production audit with zero reported vulnerabilities. Initial test launch was blocked by sandbox access to the OS user profile; the same suite passed outside the sandbox.
 
 Re-ran the complete local MVP browser workflow, 18 route/viewport checks, 12 further layout checks, motion/keyboard checks and unconfigured-account checks. `/api/health` returns uncached 200 for valid configuration and 503 without configuration, always stating that external services are not checked. Updated screenshot evidence in `artifacts/refined-*`, `artifacts/mvp-test-*`, and `artifacts/launch-hero-{desktop,mobile}.png`; visually reviewed both hero viewports. The fixture transport still simulates Auth/Storage and cannot establish hosted readiness.

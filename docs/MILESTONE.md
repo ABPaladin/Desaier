@@ -31,7 +31,7 @@ Final deadline: **November 25, 2026**. Continue the existing project; centrally 
 - [ ] Obtain the canonical Vercel URL and authorized provider access; GitHub exposes no deployment URL. Cloud migration, SMTP and real AI remain unverified.
 
 ## November 21–22 — hosted integration (pending access)
-- [ ] Identify/provision the intended Supabase project; apply migration and verify RLS on hosted PostgreSQL.
+- [x] Identified existing production project `oueolnrsoicnamrkxawc`; applied `202611200001` through the authorized CLI workflow and verified hosted tables, RLS, policies, function grants and private bucket on November 25.
 - [ ] Configure production Auth URL, email confirmation, SMTP, password policy and rate limits.
 - [ ] Set Vercel environment variables; bootstrap the first operator through trusted SQL.
 - [ ] Configure OpenAI credentials/model and exercise a real, approved test brief.
@@ -47,7 +47,9 @@ Final deadline: **November 25, 2026**. Continue the existing project; centrally 
 ## November 25 — release
 - [x] Prepared official Supabase CLI 3.3.0 configuration, single-method migration runbook and read-only preflight/catalog checks. All 19 local tests pass; migration file remains unchanged.
 - [x] CLI login/link and read-only preflight verified production project `oueolnrsoicnamrkxawc` (dashboard name Desair). Remote history/schema/bucket are empty; dry-run proposes only `202611200001_agency.sql`.
-- [ ] Apply the initial migration only after the owner's explicit target-specific authorization, then verify history, all seven tables, RLS, RPCs and private bucket. No online migration applied by Codex. Do not push while Supabase GitHub deployment behavior is unverified.
+- [x] Owner confirmed continuation; unchanged migration applied once through CLI to the exact approved production target. History matches locally/remotely; all seven tables, RLS, 15 functions, 10 policies, Auth trigger and private bucket verified. No additional policies.
+- [x] Re-ran 19 local tests, lint, TypeScript and production build. Verified Vercel homepage is reachable at `https://desaier-cjyd.vercel.app`; health correctly reports 503 `missing_or_invalid`.
+- [ ] Configure Vercel Production variables and redeploy, then test real signup/confirmation/recovery, operator bootstrap and cross-role workflow. Keep Git push pending until Supabase GitHub configuration-deployment behavior is understood; only CLI was authorized for this migration.
 - [ ] Final integrated production smoke, permissions and visual review.
 - [ ] Commit/push release state, verify Vercel deployment and hand over operator setup/runbook.
 

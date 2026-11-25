@@ -1,5 +1,11 @@
 # Backend audit — November 24, 2026
 
+## November 25 update
+
+The existing Supabase production project `oueolnrsoicnamrkxawc` (dashboard name Desair) is now migrated through the owner-authorized CLI workflow. Version `202611200001` matches local and remote history. Read-only hosted verification passed for all seven tables/RLS, 15 function signatures/grants/search paths, ten policies, Auth trigger and private 20 MB bucket, with no extra policies. The policy expressions were reviewed against the migration.
+
+The live site is `https://desaier-cjyd.vercel.app`; homepage is reachable, but `/api/health` returns 503 `configuration: missing_or_invalid`. Vercel variables/redeploy, SMTP, first operator and actual authenticated integration tests remain pending. All 19 local tests, lint, TypeScript and build pass. The table below records the earlier pre-migration audit; its hosted-database limitation is superseded by this update.
+
 The repository, migration, API handlers and tests were inspected. The two missing remote commits (`a6c67ad`, `6981a7a`) were pushed to existing `main` without rewriting history. GitHub previously lacked the local functional implementation.
 
 | Component | Actual implementation | Verification / remaining work |

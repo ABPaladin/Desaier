@@ -2,19 +2,23 @@
 
 Metoda aleasă: **Supabase CLI 3.3.0**, din rădăcina repository-ului. MCP rămâne read-only. Nu executa migrația și prin SQL Editor, MCP sau automatizarea GitHub. Înainte de pushuri Git, verifică dacă integrarea Supabase are deployment automat activ; nu lansa două procese concurente.
 
-## Starea verificată local
+## Starea verificată — 25 noiembrie 2026
 
 - `supabase init` a creat numai configurația locală, fără proiect cloud sau Docker.
 - CLI disponibil și autentificat: `3.3.0`. MCP Supabase nu este încă disponibil în această sesiune; citirile au folosit CLI `--read-only`.
 - Țintă verificată: **Desair**, ref `oueolnrsoicnamrkxawc`, organizație `fhajerdziizyqfihlifk`, regiune `eu-west-1`, environment **production**, PostgreSQL 17.12, status `ACTIVE_HEALTHY`. Referința corespunde URL-ului furnizat de proprietar și checkoutului legat local.
-- Istoric verificat: versiunea `202611200001` apare numai local; remote gol. Preflight: zero tabele/funcții publice, zero politici Storage, fără triggerul aplicației, fără bucket `deliverables`, fără relația de istoric a migrărilor.
-- Dry-run reușit: numai `202611200001_agency.sql`, fără seeds sau roles. **Aplicarea reală așteaptă autorizarea explicită a proprietarului.**
+- Preflight revalidat înainte de aplicare: istoric remote gol, zero tabele/funcții publice, zero politici Storage, fără triggerul aplicației și fără bucket `deliverables`.
+- După confirmarea proprietarului, CLI a aplicat o singură dată `202611200001_agency.sql`, cu `--remote=oueolnrsoicnamrkxawc --skip-vault --yes`, fără seeds sau roles. Nu s-a folosit o a doua metodă.
+- Istoricul verificat ulterior conține `202611200001` atât local, cât și remote. Verificarea online are `catalog_checks_pass=true`: 7 tabele cu RLS, 15 funcții cu permisiunile așteptate, 10 politici, trigger Auth valid și bucket privat valid. Nicio politică suplimentară. Expresiile politicilor corespund migrației revizuite.
 - Migrația unică: `supabase/migrations/202611200001_agency.sql`, versiunea `202611200001`.
 - SHA-256 al fișierului local revizuit: `F2FE7522BD71C0FB3FD84D3B20C4B22FF6EF2008F2AABFEF4862BA8F3B8A6CA4`. Hashul identifică octeții locali; CRLF/LF poate produce alt hash după checkout. Recalculează înainte de autorizare.
 - Efecte: șapte tabele, șapte politici RLS publice, trei politici Storage, 15 funcții (nouă RPC-uri de lucru + șase funcții auxiliare/trigger), trigger Auth și bucket privat de 20 MB.
 - Conturile Auth existente primesc profiluri client. Nu este creat automat un operator. Nu sunt introduse proiecte demo.
 - Migrația nu este idempotentă; dacă obiectele există, investighează, nu o reaplica și nu repara forțat istoricul.
-- 19 teste locale trec, inclusiv verificarea catalogului și detectarea unui grant UPDATE nepermis. Nicio migrare online efectuată.
+- 19 teste locale, lint, TypeScript și build trec. Baza este migrată online; fluxurile Auth/email/Storage/AI cu utilizatori reali rămân de verificat după conectarea Vercel.
+- Site identificat: `https://desaier-cjyd.vercel.app`. Pagina publică răspunde, însă `/api/health` returnează 503 și `configuration: missing_or_invalid`. Urmează configurarea variabilelor Production și redeploy, conform `ONLINE_SETUP.md`.
+
+Pașii de mai jos documentează procedura executată. **Nu relansa migrația inițială:** pentru schimbări viitoare creează migrări noi.
 
 ## 1. Autentificare și identificare — fără aplicarea migrației
 
