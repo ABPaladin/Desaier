@@ -85,3 +85,29 @@ playwright-cli.cmd run-code --filename=tests/motion-smoke.js
 ```
 
 Restart the test provider before repeating the MVP workflow: fixtures are temporary, and the test deliberately suspends a designer at the end. Stop both servers afterward. Remove the three test environment variables from that terminal (or open a fresh terminal) and rebuild before using real configuration. Never deploy these local test URLs/keys. The test password in source is only for in-memory fixtures.
+
+## November 25 — navigation, heritage mark and public motion
+
+Implemented in the existing Next.js + Supabase application. No dependencies, production migrations, credentials or RLS policies changed.
+
+The root layout streams a neutral account placeholder until `getUser` and a protected profile read complete. `connection()` explicitly excludes Supabase's time-dependent session internals from Next.js partial prerendering. A page-only proxy writes token refresh cookies before server rendering; existing API authorization is unchanged. The navigation endpoint returns only name/role with private, no-store headers. UI identity is never read from local storage or editable Auth metadata. Auth POST responses update the same-tab shell immediately; cross-tab broadcasts contain only an invalidation signal, followed by server validation. Route changes, focus, visibility restoration and a visible-tab 60-second check revalidate roles. Transient validation failures retain the current display rather than flashing guest controls; APIs remain authoritative.
+
+The profile disclosure uses native links/buttons, Tab and arrow/Home/End navigation, Escape focus restoration, outside pointer dismissal and touch controls. Only designers see My Profile, which opens their existing editable profile. Operators/designers receive their own workspace CTA throughout the public site. Hidden workspaces also consult current navigation identity to avoid displaying stale content after sign-out or role changes.
+
+Logo history reviewed: `028a8dc` used the Desaier wordmark with an eight-point asterisk; `a6c67ad` replaced it with crossed ellipses. The historical shape is now a deterministic static SVG rather than a font/emoji glyph. The [MITP homepage](https://mitp.md/ro/pagina-acasa/) was reviewed for its strong opening composition, editorial sections and contrasting content blocks. Desaier retains its own typography, purple identity and sculpture.
+
+Motion uses existing CSS and Web Animations, with 24 fixed cubic paths instead of 32 repetitive ellipses. Three transform layers use different 13/17/21-second cycles beneath a gentle 23-second float and 19-second breath. No per-frame path rebuilding, GSAP or WebGL. Reveal styles differ by content; scroll work is coalesced through requestAnimationFrame and limited to three public section accents. Reduced motion cancels active reveals and disables continuous/scroll movement. Public motion is excluded from account and dashboard routes.
+
+Verification on the local production build with isolated demo fixtures:
+
+- Lint, TypeScript, 20 unit/PostgreSQL authorization tests and production builds with/without backend configuration passed. The final local build contains no fixture provider configuration. A Windows sandbox restriction initially blocked Node's user-info lookup; the unchanged tests passed outside that sandbox.
+- `tests/navigation-browser.js`: guest plus client/designer/operator; invalid login; forged local role ignored; server-rendered identity/no guest login; minimal uncached identity response; page refresh; role-aware CTAs; dashboard/profile destinations; keyboard, outside click and mobile touch; logout/reload/cross-tab logout. No page or hydration errors.
+- `tests/session-navigation-browser.js`: expired cookie refresh with preserved HttpOnly/SameSite flags, untrusted metadata ignored, failed validation and logout, operator-driven role changes, suspension and replay of revoked tokens. Fixture Auth transport now supports refresh; this is not a claim of live Supabase refresh verification.
+- `tests/refinement-motion-browser.js`: all three ribbon layers change independently, pause stops them, logo stays static on hover, section progress follows scroll, live reduced-motion changes stop motion, and portfolio expansion exposes/hides its content correctly.
+- Existing `motion-smoke.js`, `visual-smoke.js` and `mvp-browser.js` passed: 30 responsive route checks and full client/operator/designer brief, staffing, profile, notes, upload, approval, download, CSRF, suspension and logout workflow.
+- Unconfigured `configuration-smoke.js` passed: all account forms disabled, unavailable private APIs, no demo content in real workspaces, blocked cross-site mutations and safe callback redirects. Final motion checks also passed after refining the pause button's alignment and 44px touch target.
+- Read-only production `online-smoke.mjs` passed: public homepage, configuration health and anonymous workspace denial. Owner confirms live registration/client login; this change has not been deployed or tested with real authenticated production accounts.
+
+Inspected desktop/mobile homepage and profile-menu screenshots under `artifacts/navigation-*`, plus refreshed public/workspace captures from the existing suites. Reports: `navigation-report.txt`, `session-navigation-report.txt`, `refinement-motion-report.txt`, `regression-motion-report.txt`, `regression-visual-report.txt`, `regression-mvp-report.txt`. All account screenshots contain labeled demo fixtures only. Browser verification used Chromium; real-device and cross-browser acceptance remain pending.
+
+Run the new scripts with the same local setup above, before `mvp-browser.js` (which suspends a fixture designer). These tests intentionally target only `http://localhost:3003`.

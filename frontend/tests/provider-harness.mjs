@@ -19,7 +19,7 @@ await db.exec(`
   grant select,insert,update,delete on storage.objects to authenticated;
 `);
 await db.exec(await readFile(new URL('../../supabase/migrations/202611200001_agency.sql', import.meta.url), 'utf8'));
-const users = new Map(), sessions = new Map(), uploads = new Map();
+const users = new Map(), sessions = new Map(), refreshTokens = new Map(), uploads = new Map();
 for (const [index, role] of ['client', 'other', 'designer', 'operator'].entries()) {
   const id = `20000000-0000-4000-8000-00000000000${index + 1}`;
   const email = `${role}@demo.test`;
@@ -55,13 +55,20 @@ const server = http.createServer(async (req, res) => {
     const token = req.headers.authorization?.replace('Bearer ', '');
     let user = sessions.get(token);
     if (url.pathname === '/auth/v1/token') {
-      user = users.get(body.email);
-      if (!user || body.password !== 'demo-test-password') return send(res, 400, { error_code: 'invalid_credentials', msg: 'Invalid test credentials' });
+      const refreshing = url.searchParams.get('grant_type') === 'refresh_token';
+      user = refreshing ? refreshTokens.get(body.refresh_token) : users.get(body.email);
+      if (!user || (!refreshing && body.password !== 'demo-test-password')) return send(res, 400, { error_code: 'invalid_credentials', msg: 'Invalid test credentials' });
       const jwt = [Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url'), Buffer.from(JSON.stringify({ sub: user.id, exp: Math.floor(Date.now() / 1000) + 3600, role: 'authenticated' })).toString('base64url'), randomUUID()].join('.');
       sessions.set(jwt, user);
-      return send(res, 200, { access_token: jwt, refresh_token: randomUUID(), token_type: 'bearer', expires_in: 3600, user });
+      const refreshToken = randomUUID();
+      refreshTokens.set(refreshToken, user);
+      return send(res, 200, { access_token: jwt, refresh_token: refreshToken, token_type: 'bearer', expires_in: 3600, user });
     }
-    if (url.pathname === '/auth/v1/logout') { sessions.delete(token); return send(res, 200, {}); }
+    if (url.pathname === '/auth/v1/logout') {
+      sessions.delete(token);
+      for (const [key, value] of refreshTokens) if (value.id === user?.id) refreshTokens.delete(key);
+      return send(res, 200, {});
+    }
     if (url.pathname === '/auth/v1/user') return send(res, user ? 200 : 401, user || { msg: 'Unauthenticated' });
     const signedUpload = url.pathname.startsWith('/storage/v1/object/upload/sign/');
     const objectPath = decodeURIComponent(url.pathname.split('/deliverables/')[1] || '');

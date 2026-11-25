@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { BriefcaseBusiness, CircleCheck, Clock3, FileText, LogOut, Plus, RefreshCw, ShieldCheck, Upload, WandSparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/client-api';
+import { useNavigationIdentity } from '@/components/navigation-identity';
 import { validateFile } from '@/lib/validation';
 import { serviceNames, statusNames, type Profile, type ProjectDetail, type WorkspaceData } from '@/lib/contracts';
 
@@ -13,6 +14,7 @@ const date = (value: string) => new Date(value).toLocaleDateString('en-GB', { da
 
 export function LiveWorkspace({ requestedRole }: { requestedRole?: string }) {
   const router = useRouter();
+  const { user: navigationUser } = useNavigationIdentity();
   const [data, setData] = useState<WorkspaceData | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [detail, setDetail] = useState<ProjectDetail | null>(null);
@@ -22,6 +24,14 @@ export function LiveWorkspace({ requestedRole }: { requestedRole?: string }) {
   const [filter, setFilter] = useState('');
   const [revision, setRevision] = useState(0);
   const [tab, setTab] = useState<'projects' | 'new' | 'team' | 'profile'>('projects');
+  useEffect(() => {
+    const selectView = () => { if (window.location.hash === '#profile' && requestedRole === 'designer') setTab('profile'); };
+    selectView();
+    const openProfile = () => { if (requestedRole === 'designer') setTab('profile'); };
+    window.addEventListener('hashchange', selectView);
+    window.addEventListener('desaier:open-profile', openProfile);
+    return () => { window.removeEventListener('hashchange', selectView); window.removeEventListener('desaier:open-profile', openProfile); };
+  }, [requestedRole]);
   const load = useCallback(async (signal?: AbortSignal) => {
     const result = await api<WorkspaceData>('/api/workspace', undefined, signal);
     if (requestedRole !== result.profile.role) router.replace(`/dashboard/${result.profile.role}`);
@@ -67,7 +77,7 @@ export function LiveWorkspace({ requestedRole }: { requestedRole?: string }) {
       return saved;
     } finally { setBusy(false); }
   };
-  if (!data) return <section className="dashboard"><p className="eyebrow">DESAIER WORKSPACE</p><h1>Your creative workspace.</h1>
+  if (!data || !navigationUser || data.profile.role !== navigationUser.role) return <section className="dashboard"><p className="eyebrow">DESAIER WORKSPACE</p><h1>Your creative workspace.</h1>
     {error ? <div className="panel"><p role="alert">{error}</p><div className="dash-actions"><Button className="pill" onClick={refresh} disabled={busy}>Try again</Button><Link className="pill secondary" href="/login">Log in</Link><Link className="text-link" href="/demo/client">Explore the demo</Link></div></div> : <p role="status">Opening your workspace…</p>}
   </section>;
   const { profile, projects, members } = data;

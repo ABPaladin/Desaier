@@ -43,6 +43,6 @@ export async function POST(request: Request, context: { params: Promise<{ action
     const { data, error } = await db.auth.signInWithPassword({ email, password });
     if (error || !data.user) throw new AppError('Login failed. Check your details and confirm your email.', 401);
     const { profile } = await identity();
-    return json({ redirect: `/dashboard/${profile.role}` });
+    return json({ redirect: `/dashboard/${profile.role}`, navigation: { user: { name: profile.name, role: profile.role } } });
   });
 }

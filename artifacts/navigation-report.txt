@@ -1,0 +1,2 @@
+### Result
+{"status":"PASS","checks":["Guest navigation, forged local role ignored, invalid login feedback","client: login, server identity, refresh, navigation, keyboard, outside click, touch menu, logout and cross-tab logout","designer: login, server identity, refresh, navigation, keyboard, outside click, touch menu, logout and cross-tab logout","operator: login, server identity, refresh, navigation, keyboard, outside click, touch menu, logout and cross-tab logout"],"browserErrors":[]}

@@ -9,5 +9,9 @@ export async function api<T>(path: string, body?: Record<string, unknown>, signa
     const error = new Error(data.error || 'Please try again.');
     Object.assign(error, { status: response.status }); throw error;
   }
+  if (body && path.startsWith('/api/auth/') && typeof window !== 'undefined') {
+    const signedOut = ['/api/auth/logout', '/api/auth/register', '/api/auth/update-password'].includes(path);
+    if (signedOut || data.navigation) window.dispatchEvent(new CustomEvent('desaier:auth', { detail: signedOut ? { user: null } : data.navigation }));
+  }
   return data as T;
 }

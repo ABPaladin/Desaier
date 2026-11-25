@@ -1,0 +1,2 @@
+### Result
+"PASS: all four account forms disabled without configuration, private APIs fail closed/no-store, real workspaces contain no demo records, cross-site mutation blocked, invalid callback stays on-site; mobile layout checks passed."

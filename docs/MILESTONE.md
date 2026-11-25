@@ -55,3 +55,13 @@ Final deadline: **November 25, 2026**. Continue the existing project; centrally 
 - [ ] Commit/push release state, verify Vercel deployment and hand over operator setup/runbook.
 
 Academy enrollment and payments are not inferred from the concept document. Academy remains Coming Soon; no payment flow has been added.
+
+## November 25 — authenticated navigation and visual refinement
+
+- [x] Owner reports production Supabase configuration, email registration and real client login working. This supersedes the earlier configuration blockers above. Read-only production smoke passed at `https://desaier-cjyd.vercel.app`; no live account mutations were performed in this milestone.
+- [x] Server-rendered account navigation validates with Supabase `getUser` and protected profile role/active status. Only name and role reach the public shell; HttpOnly cookie settings, RLS and database migrations are unchanged. A page proxy persists refreshed cookies before rendering.
+- [x] Accessible desktop/mobile account disclosure, role-specific dashboard and project actions, designer-only functional profile link, logout feedback, immediate login/logout updates, tab synchronization and focus/route revalidation. No unsupported Settings link.
+- [x] Historical asterisk logo from `028a8dc` restored as a static SVG in header/footer and shared brand placements; no emoji or logo animation.
+- [x] Asymmetric 24-path ribbon with three independent transform layers, richer orchid/amethyst lighting, pointer response, pause/offscreen suspension and reduced motion. Varied public text/artwork/service/process reveals, scroll accents and animated portfolio expansion; dashboards remain calm. No new dependencies.
+- [x] Lint, TypeScript, 20 authorization/configuration/validation tests and production build. Targeted navigation/session/motion browser checks; existing complete agency workflow and 30 responsive checks. Updated desktop/mobile screenshots inspected. Evidence and limits in `docs/VERIFICATION.md`.
+- [ ] Deploy this reviewed local milestone, then perform authenticated acceptance against the live provider. No Git push, Vercel deployment, production migration or policy change was made for this task.

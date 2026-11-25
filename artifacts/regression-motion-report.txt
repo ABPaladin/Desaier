@@ -1,0 +1,2 @@
+### Result
+"PASS: motion pause/resume, pointer drift, offscreen suspension, live reduced-motion change, hover, keyboard entry, 12 additional responsive checks."

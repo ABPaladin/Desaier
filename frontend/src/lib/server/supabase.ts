@@ -8,14 +8,15 @@ import { validBackendConfig } from '@/lib/backend-config';
 export function backendConfigured() {
   return validBackendConfig(process.env);
 }
-export async function database() {
+export async function database(readOnly = false) {
   if (!backendConfigured()) throw new AppError('The workspace is not available yet. Please try again later.', 503);
   const jar = await cookies();
   return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
     cookieOptions: { httpOnly: true, sameSite: 'lax', secure: new URL(process.env.APP_ORIGIN!).protocol === 'https:', path: '/' },
     cookies: {
       getAll: () => jar.getAll(),
-      setAll: values => { values.forEach(({ name, value, options }) => jar.set(name, value, options)); },
+      // Server Components cannot write cookies. The page proxy persists refreshes.
+      setAll: values => { if (!readOnly) values.forEach(({ name, value, options }) => jar.set(name, value, options)); },
     },
   });
 }

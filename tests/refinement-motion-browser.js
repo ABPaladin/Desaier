@@ -1,0 +1,35 @@
+async (page) => {
+  const ensure = (value, message) => { if (!value) throw Error(message); };
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('http://localhost:3003');
+  await page.locator('.ribbon-layer').first().waitFor();
+  ensure(await page.locator('.ribbon-layer path').count() === 24, 'Organic geometry missing');
+  const sample = () => page.locator('.ribbon-layer').evaluateAll(layers => layers.map(el => getComputedStyle(el).transform));
+  const first = await sample();
+  await page.waitForTimeout(1100);
+  const second = await sample();
+  ensure(first.every((value, i) => value !== second[i]), 'Ribbon layers do not move independently');
+  ensure(new Set(second).size === 3, 'Ribbon repeats identical layer motion');
+  await page.screenshot({ path: 'artifacts/navigation-motion-active-desktop.png' });
+  await page.getByRole('button', { name: 'Pause motion' }).click();
+  const paused = await sample(); await page.waitForTimeout(200);
+  ensure(JSON.stringify(paused) === JSON.stringify(await sample()), 'Pause left ribbon moving');
+  await page.getByRole('button', { name: 'Resume motion' }).click();
+  await page.locator('.logo').first().hover();
+  ensure(await page.locator('.logo .brand-mark').first().evaluate(el => getComputedStyle(el).transform) === 'none', 'Logo animates');
+  await page.locator('.process').scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => Number(document.querySelector('.process').style.getPropertyValue('--journey')) > .3);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  ensure((await page.locator('.ribbon-layer').evaluateAll(layers => layers.every(el => getComputedStyle(el).animationName === 'none'))), 'Reduced motion left layers animating');
+  ensure(await page.locator('.process').evaluate(el => el.style.getPropertyValue('--journey')) === '', 'Reduced motion left scroll animation active');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('http://localhost:3003');
+  await page.locator('.hero').waitFor();
+  await page.screenshot({ path: 'artifacts/navigation-motion-home-mobile.png', fullPage: true });
+  await page.locator('.work').first().click();
+  ensure(await page.locator('.study-expansion').first().getAttribute('aria-hidden') === 'false', 'Expansion inaccessible');
+  await page.locator('.work').first().click();
+  ensure(await page.locator('.study-expansion').first().getAttribute('aria-hidden') === 'true', 'Collapse inaccessible');
+  return 'PASS: 24 organic paths, independent layered movement, pause, static logo, scroll progression, live reduced motion and mobile expansion.';
+}

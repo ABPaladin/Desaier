@@ -1,0 +1,2 @@
+PASS: expired-cookie refresh persisted securely, untrusted metadata ignored, outage and failed logout recovery, live role change, suspension and revoked session.
+Local Next.js production build, Supabase SDK and isolated Auth transport with real PostgreSQL RLS. No production credentials or customer data used.
