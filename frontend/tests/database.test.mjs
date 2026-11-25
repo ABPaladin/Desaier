@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
+import { applyMigrations } from './migrations.mjs';
 
 test('PostgreSQL migration, RLS and transactional agency workflow', async t => {
   const db = new PGlite();
@@ -25,12 +26,16 @@ test('PostgreSQL migration, RLS and transactional agency workflow', async t => {
   assert.deepEqual(preflight.deliverables_bucket, []);
   assert.equal(preflight.migration_history_relation, null);
   await db.exec(await readFile(new URL('../../supabase/migrations/202611200001_agency.sql', import.meta.url), 'utf8'));
+  const legacy = '10000000-0000-4000-8000-000000000090';
+  await db.query(`insert into auth.users(id,raw_user_meta_data) values($1,'{"name":"Existing fixture"}')`, [legacy]);
+  await db.query(`update public.profiles set role='designer' where id=$1`, [legacy]);
+  await applyMigrations(db, '202611200001');
   await t.test('deployment catalog verification detects expected schema and unsafe extra grants', async () => {
     const sql = await readFile(new URL('../../supabase/checks/verify_agency.sql', import.meta.url), 'utf8');
     const report = (await db.query(sql)).rows[0].verification;
     assert.equal(report.catalog_checks_pass, true, JSON.stringify(report));
     assert.equal(report.tables.length, 7);
-    assert.equal(report.functions.length, 15);
+    assert.equal(report.functions.length, 16);
     assert.equal(report.policies.length, 10);
     assert.deepEqual(report.additional_policies_to_review, []);
     await db.exec('grant update on public.projects to authenticated');
@@ -170,6 +175,42 @@ test('PostgreSQL migration, RLS and transactional agency workflow', async t => {
     assert.equal((await as(client, 'select * from public.events where project_id=$1', [project])).length, 7);
     assert.equal((await as(other, 'select * from public.events where project_id=$1', [project])).length, 0);
     await denied(client, 'delete from public.events');
+  });
+  await t.test('designer application migration preserves existing staff and never trusts requested privileges', async () => {
+    const existing = (await db.query('select role,active,designer_application_status from public.profiles where id=$1', [legacy])).rows[0];
+    assert.deepEqual(existing, { role: 'designer', active: true, designer_application_status: 'none' });
+    const applicant = '10000000-0000-4000-8000-000000000020';
+    await db.query('insert into auth.users(id,raw_user_meta_data) values($1,$2)', [applicant, JSON.stringify({ name: 'Demo applicant', account_type: 'designer', role: 'operator', designer_application_status: 'approved' })]);
+    const own = (await as(applicant, 'select role,designer_application_status from public.profiles'))[0];
+    assert.deepEqual(own, { role: 'client', designer_application_status: 'pending' });
+    await denied(applicant, `update public.profiles set designer_application_status='approved'`);
+    await denied(applicant, `select public.review_designer_application($1,'approved')`, [applicant]);
+    await denied(designer, `select public.review_designer_application($1,'approved')`, [applicant]);
+    await assert.rejects(as(null, `select public.review_designer_application($1,'approved')`, [applicant], 'anon'), e => e.code === '42501');
+    await denied(applicant, `select public.update_designer_profile('Branding','','','','',true)`);
+    assert.equal((await as(other, 'select * from public.profiles where id=$1', [applicant])).length, 0);
+    await denied(operator, `select public.review_designer_application($1,'operator')`, [applicant], '22023');
+    await as(operator, `select public.review_designer_application($1,'approved')`, [applicant]);
+    const approved = (await as(applicant, 'select role,designer_application_status,designer_application_reviewed_at from public.profiles'))[0];
+    assert.equal(approved.role, 'designer'); assert.equal(approved.designer_application_status, 'approved'); assert.ok(approved.designer_application_reviewed_at);
+    await as(applicant, `select public.update_designer_profile('Branding','','','','',true)`);
+    await denied(operator, `select public.review_designer_application($1,'declined')`, [applicant], '22023');
+  });
+  await t.test('declining, suspension and project history cannot accidentally grant designer access', async () => {
+    for (const suffix of ['21','22','23','24']) {
+      await db.query(`insert into auth.users(id,raw_user_meta_data) values($1,'{"name":"Demo review fixture","account_type":"designer"}')`, [`10000000-0000-4000-8000-0000000000${suffix}`]);
+    }
+    const rejected = '10000000-0000-4000-8000-000000000021', suspended = '10000000-0000-4000-8000-000000000022', history = '10000000-0000-4000-8000-000000000023', manual = '10000000-0000-4000-8000-000000000024';
+    await as(operator, `select public.review_designer_application($1,'declined')`, [rejected]);
+    assert.deepEqual((await as(rejected, 'select role,designer_application_status from public.profiles'))[0], { role: 'client', designer_application_status: 'declined' });
+    await denied(operator, `select public.review_designer_application($1,'approved')`, [rejected], '40001');
+    await as(operator, `select public.manage_member($1,'client',false)`, [suspended]);
+    await denied(operator, `select public.review_designer_application($1,'approved')`, [suspended], '22023');
+    await as(history, `select public.create_project('Client history','Digital experiences','A sufficiently detailed client project brief.')`);
+    await denied(operator, `select public.review_designer_application($1,'approved')`, [history], '22023');
+    assert.deepEqual((await as(history, 'select role,designer_application_status from public.profiles'))[0], { role: 'client', designer_application_status: 'pending' });
+    await as(operator, `select public.manage_member($1,'designer',true)`, [manual]);
+    assert.equal((await as(manual, 'select designer_application_status from public.profiles'))[0].designer_application_status, 'approved');
   });
   await db.close();
 });

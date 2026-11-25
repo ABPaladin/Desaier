@@ -102,3 +102,23 @@ fieldset { padding:0; margin:0; border:0; min-width:0; }
 @media(max-width:1000px) { .member-row,.member-row fieldset { flex-wrap:wrap; }.project-layout { grid-template-columns:minmax(220px,.8fr) minmax(0,1.5fr); } }
 @media(max-width:800px) { .workspace-top { align-items:flex-start; flex-direction:column; }.workspace-stats { grid-template-columns:1fr 1fr; }.stat { padding:18px; }.project-layout { grid-template-columns:1fr; }.project-list { max-height:360px; }.assignment-form fieldset { grid-template-columns:1fr; gap:0; }.activity-list li { flex-direction:column; gap:6px; }.academy>span { width:230px; height:230px; }.discipline-band .brand-mark { width:16px; height:16px; }.live-workspace h1 { font-size:clamp(34px,8vw,54px); }.member-row fieldset { display:grid; width:100%; }.workspace-stats { gap:10px; }.stat strong { font-size:28px; }.stat span { font-size:13px; } }
 @media(max-width:380px) { .discipline-band .brand-mark { width:12px; height:12px; }.stat { padding:14px; }.workspace-tabs button { padding:10px 14px; } }
+/* Account type is an application preference, not a selectable staff privilege. */
+.account-type { margin: 0 0 24px; }
+.account-type legend { font-size: 13px; margin-bottom: 10px; }
+.account-type > div { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.account-type label { display: flex; align-items: flex-start; gap: 10px; padding: 14px; margin: 0; border: 1px solid #715586; border-radius: 12px; cursor: pointer; background: #1d102f; }
+.account-type label:has(input:checked) { background: #402456; border-color: #d6acf0; }
+.account-type label:focus-within { outline: 2px solid #dec1f5; outline-offset: 3px; }
+.account-type input[type=radio] { width: 17px; height: 17px; margin: 2px 0 0; padding: 0; flex-shrink: 0; accent-color: #d6acf0; }
+.account-type span { display: grid; gap: 5px; }
+.account-type strong { font-size: 14px; }
+.account-type small { color: #cfbbdf; font-size: 11px; line-height: 1.45; }
+.application-status { max-width: 760px; margin-top: 32px; }
+.application-status > svg { color: #d6acf0; margin-bottom: 20px; }
+.application-status h2 { line-height: 1.2; }
+.application-count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 12px; background: #dbb4ee; color: #211137; font-size: 11px; margin-left: 8px; }
+.designer-applications { margin: 30px 0; }
+.application-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid #ffffff25; }
+.application-row small { display: block; margin-top: 5px; color: #cfbbdf; }
+.application-row .pill { margin: 0; }
+@media(max-width:600px) { .account-type > div { grid-template-columns: 1fr; } .application-row { align-items: flex-start; flex-direction: column; } }

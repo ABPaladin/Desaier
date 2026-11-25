@@ -8,7 +8,7 @@ export async function GET() {
     const { db, profile } = await identity();
     const [projects, members] = await Promise.all([
       db.from('projects').select('*').order('updated_at', { ascending: false }).limit(200),
-      profile.role === 'operator' ? db.from('profiles').select('*').order('name').limit(500) : Promise.resolve({ data: [], error: null }),
+      profile.role === 'operator' ? db.from('profiles').select('*').order('designer_application_status', { ascending: false }).order('name').limit(500) : Promise.resolve({ data: [], error: null }),
     ]);
     dbCheck(projects.error); dbCheck(members.error);
     return json({ profile, projects: projects.data, members: members.data, aiEnabled: Boolean(process.env.OPENAI_API_KEY && process.env.OPENAI_MODEL) });
@@ -19,6 +19,12 @@ export async function POST(request: Request) {
     const body = await bodyOf(request);
     const { db, profile } = await identity();
     const action = textField(body, 'action', 1, 40);
+    if (action === 'review-designer') {
+      if (profile.role !== 'operator') throw new AppError('Operator access required.', 403);
+      if (body.decision !== 'approved' && body.decision !== 'declined') throw new AppError('Choose an application decision.');
+      const { error } = await db.rpc('review_designer_application', { p_id: uuidField(body, 'member_id'), p_decision: body.decision });
+      dbCheck(error); return json({ ok: true });
+    }
     if (action === 'create') {
       if (profile.role !== 'client') throw new AppError('Client access required.', 403);
       const service = textField(body, 'service', 1, 100);

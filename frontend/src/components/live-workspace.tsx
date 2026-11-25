@@ -81,14 +81,26 @@ export function LiveWorkspace({ requestedRole }: { requestedRole?: string }) {
     {error ? <div className="panel"><p role="alert">{error}</p><div className="dash-actions"><Button className="pill" onClick={refresh} disabled={busy}>Try again</Button><Link className="pill secondary" href="/login">Log in</Link><Link className="text-link" href="/demo/client">Explore the demo</Link></div></div> : <p role="status">Opening your workspace…</p>}
   </section>;
   const { profile, projects, members } = data;
+  const applicant = profile.role === 'client' && ['pending', 'declined'].includes(profile.designer_application_status);
+  const applications = members.filter(member => member.role === 'client' && member.designer_application_status === 'pending');
   const filtered = projects.filter(project => `${project.title} ${project.service} ${statusNames[project.status]}`.toLowerCase().includes(filter.toLowerCase()));
   return <section className="dashboard live-workspace">
     <div className="workspace-top"><p className="eyebrow">DESAIER / {profile.role.toUpperCase()} WORKSPACE</p><div className="dash-actions">
       <button className="quiet-button" onClick={refresh} disabled={busy}><RefreshCw size={16} aria-hidden="true"/>Refresh</button>
       <button className="quiet-button" disabled={busy} onClick={async () => { setBusy(true); try { await api('/api/auth/logout', {}); router.replace('/login'); router.refresh(); } catch (error) { setError((error as Error).message); setBusy(false); } }}><LogOut size={16} aria-hidden="true"/>Log out</button>
     </div></div>
-    <h1>{profile.role === 'operator' ? 'Keep creativity moving.' : profile.role === 'designer' ? 'Make your next great thing.' : 'Your ideas, taking shape.'}</h1>
+    <h1>{applicant ? 'Your designer application.' : profile.role === 'operator' ? 'Keep creativity moving.' : profile.role === 'designer' ? 'Make your next great thing.' : 'Your ideas, taking shape.'}</h1>
     <p>Welcome, {profile.name}. {profile.role === 'client' ? 'Your agency team is with you at every step.' : 'A shared view of the work and what comes next.'}</p>
+    <div className="workspace-notices" aria-live="polite">{message && <p className="feedback" role="status">{message}</p>}{error && <p className="feedback error" role="alert">{error}</p>}</div>
+    {applicant ? <div className="panel application-status">
+      <ShieldCheck size={30} aria-hidden="true"/>
+      <h2>{profile.designer_application_status === 'pending' ? 'Your application is awaiting review.' : 'Your application was not approved.'}</h2>
+      <p>{profile.designer_application_status === 'pending'
+        ? 'Your account is ready. An agency operator will review your request to join the creative team. Designer tools and assigned projects become available after approval.'
+        : 'Desaier has reviewed your request. Designer access has not been enabled. Contact your agency representative if you would like to discuss the decision.'}</p>
+      <p>Use Refresh to check for an update. You can also log in again after the agency approves your access.</p>
+      {profile.designer_application_reviewed_at && <p className="note">Reviewed {date(profile.designer_application_reviewed_at)}</p>}
+    </div> : <>
     <div className="workspace-stats">
       {[[BriefcaseBusiness, 'Projects', projects.length], [Clock3, 'In progress', projects.filter(p => ['in_progress', 'changes_requested'].includes(p.status)).length], [ShieldCheck, 'In review', projects.filter(p => p.status === 'in_review').length], [CircleCheck, 'Delivered', projects.filter(p => p.status === 'delivered').length]].map(([Icon, label, value]) => {
         const StatIcon = Icon as typeof BriefcaseBusiness;
@@ -99,17 +111,24 @@ export function LiveWorkspace({ requestedRole }: { requestedRole?: string }) {
       <button aria-pressed={tab === 'projects'} onClick={() => setTab('projects')}>Projects</button>
       {profile.role === 'client' && <button aria-pressed={tab === 'new'} onClick={() => setTab('new')}><Plus size={16} aria-hidden="true"/>New brief</button>}
       {profile.role === 'designer' && <button aria-pressed={tab === 'profile'} onClick={() => setTab('profile')}>Creative profile</button>}
-      {profile.role === 'operator' && <button aria-pressed={tab === 'team'} onClick={() => setTab('team')}>People & access</button>}
+      {profile.role === 'operator' && <button aria-pressed={tab === 'team'} onClick={() => setTab('team')}>People & access{applications.length > 0 && <span className="application-count" aria-label={`${applications.length} designer applications`}>{applications.length}</span>}</button>}
     </div>
-    <div className="workspace-notices" aria-live="polite">{message && <p className="feedback" role="status">{message}</p>}{error && <p className="feedback error" role="alert">{error}</p>}</div>
     {tab === 'profile' && <DesignerProfile key={revision} profile={profile} run={run} busy={busy}/>}
     {tab === 'new' && <NewBrief run={run} busy={busy}/>}
-    {tab === 'team' && <div className="panel"><h2>People & access</h2><p>Clients register with their own email. Designate an account as a designer before assigning work. Operator access is managed by the agency owner. Roles cannot change after a member has project history.</p><div className="member-list">{members.map(member => <Member key={`${member.id}-${member.role}-${member.active}`} member={member} run={run} busy={busy}/>)}</div>{members.length === 500 && <p>Showing the first 500 members.</p>}</div>}
+    {tab === 'team' && <div className="panel"><h2>People & access</h2><p>Review designer applications before assigning work. Operator access is managed by the agency owner. Roles cannot change after a member has project history.</p>
+      <div className="designer-applications"><h3>Designer applications</h3>
+        {applications.length === 0 ? <p>No applications awaiting review.</p> : applications.map(member => <article className="application-row" key={member.id} aria-label={`Application from ${member.name}`}>
+          <div><strong>{member.name}</strong><small>Requested designer access</small>{!member.active && <p>Account inactive. Reactivate it below before reviewing.</p>}</div>
+          <div className="dash-actions"><Button className="pill small" disabled={busy || !member.active} onClick={() => void run({ action: 'review-designer', member_id: member.id, decision: 'approved' })}>Approve designer</Button><Button className="pill small secondary" disabled={busy || !member.active} onClick={() => void run({ action: 'review-designer', member_id: member.id, decision: 'declined' })}>Decline application</Button></div>
+        </article>)}
+      </div>
+      <h3>Members</h3><div className="member-list">{members.map(member => <Member key={`${member.id}-${member.role}-${member.active}`} member={member} run={run} busy={busy}/>)}</div>{members.length === 500 && <p>Showing the first 500 members, with pending applications first.</p>}</div>}
     {tab === 'projects' && <div className="project-layout"><aside className="project-sidebar panel"><label>Find a project<input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Name, service or stage"/></label>
       <p className="note">{projects.length === 200 ? 'Latest 200 projects' : `${projects.length} projects`} · newest activity first</p>
       <div className="project-list">{filtered.map(project => <button key={project.id} className="project-card" aria-pressed={selected === project.id} onClick={() => { setDetail(null); if (selected === project.id) setRevision(value => value + 1); setSelected(project.id); setError(''); setMessage(''); }}><span className={`status status-${project.status}`}>{statusNames[project.status]}</span><strong>{project.title}</strong><span>{project.service}</span><small>{project.due_date ? `Due ${date(project.due_date)}` : 'Schedule to be confirmed'}</small></button>)}</div>
       {!filtered.length && <p>{filter ? 'No projects match your search.' : profile.role === 'client' ? 'Your next chapter starts with a brief.' : 'Projects will appear here when work is available.'}</p>}
     </aside><div className="project-content">{!selected ? <div className="empty-project panel"><FileText size={36} aria-hidden="true"/><h2>Space for your next chapter.</h2><p>{profile.role === 'client' ? 'Start a brief or choose a project to see its progress, conversations and approved files.' : 'Choose a project to see the brief, tasks and delivery review.'}</p>{profile.role === 'client' && <Button className="pill" onClick={() => setTab('new')}>Start a project</Button>}</div> : detail?.project.id === selected ? <ProjectView key={`${detail.project.id}-${detail.project.version}-${revision}`} detail={detail} profile={profile} members={members} aiEnabled={data.aiEnabled} run={run} busy={busy} refresh={refresh} setError={setError} setBusy={setBusy} setMessage={setMessage}/> : <p role="status">Loading project…</p>}</div></div>}
+    </>}
   </section>;
 }
 
@@ -145,6 +164,7 @@ function Member({ member, run, busy }: { member: Profile; run: Run; busy: boolea
     <div><strong>{member.name}</strong><small>{member.id}</small>{member.role === 'designer' && <><p>{member.skills || 'Skills not yet added'}<br/>{member.languages} {member.timezone}<br/>{member.available ? 'Available for projects' : 'Currently unavailable'}</p>{member.portfolio_url && /^https:\/\//.test(member.portfolio_url) && <a className="text-link" href={member.portfolio_url} target="_blank" rel="noopener noreferrer">View portfolio</a>}</>}</div>
     {member.role === 'operator' ? <span className="status">Agency operator</span> : <fieldset disabled={busy}>
       <label>Role for {member.name}<select name="role" defaultValue={member.role}><option value="client">Client</option><option value="designer">Designer</option></select></label>
+      {member.designer_application_status !== 'none' && <p className="note">Designer application: {member.designer_application_status}</p>}
       <label className="check-label"><input type="checkbox" name="active" defaultChecked={member.active}/>Active account</label><Button className="pill secondary" type="submit">Save access</Button>
     </fieldset>}
   </form>;

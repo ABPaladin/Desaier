@@ -21,6 +21,7 @@ with expected_tables(name) as (values
   ('public.manage_task(uuid,text,uuid,boolean)',true),
   ('public.submit_delivery(uuid,integer,text,text,text)',true),
   ('public.manage_member(uuid,text,boolean)',true),
+  ('public.review_designer_application(uuid,text)',true),
   ('public.reserve_ai_run(uuid)',true),
   ('public.finish_ai_run(uuid,text,boolean)',true)
 ), function_checks as (

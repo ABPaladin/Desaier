@@ -34,11 +34,15 @@ export async function POST(request: Request, context: { params: Promise<{ action
     const password = passwordField(body, action === 'register' ? 12 : 1);
     if (action === 'register') {
       const name = textField(body, 'name', 1, 100);
-      const { error } = await db.auth.signUp({ email, password, options: { data: { name }, emailRedirectTo: `${origin}/auth/confirm` } });
+      const accountType = body.account_type ?? 'client';
+      if (accountType !== 'client' && accountType !== 'designer') throw new AppError('Choose Client or Designer.');
+      const { error } = await db.auth.signUp({ email, password, options: { data: { name, account_type: accountType }, emailRedirectTo: `${origin}/auth/confirm` } });
       if (error) throw new AppError(error.status === 429 ? 'Please wait before trying again.' : 'Registration could not be completed. Try logging in or recovering your account.', error.status === 429 ? 429 : 400);
       // Always require a deliberate login after signup, even on misconfigured providers.
       await db.auth.signOut({ scope: 'local' });
-      return json({ message: 'Check your email to confirm your account, then log in. If you already registered, use account recovery.' });
+      return json({ message: accountType === 'designer'
+        ? 'Check your email to confirm your account, then log in to see your application status. Designer access requires agency approval. If you already registered, use account recovery.'
+        : 'Check your email to confirm your account, then log in. If you already registered, use account recovery.' });
     }
     const { data, error } = await db.auth.signInWithPassword({ email, password });
     if (error || !data.user) throw new AppError('Login failed. Check your details and confirm your email.', 401);

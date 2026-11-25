@@ -1,5 +1,5 @@
 export type Role = 'client' | 'designer' | 'operator';
-export type Profile = { id: string; name: string; role: Role; active: boolean; skills: string; bio: string; languages: string; timezone: string; portfolio_url: string; available: boolean };
+export type Profile = { id: string; name: string; role: Role; active: boolean; skills: string; bio: string; languages: string; timezone: string; portfolio_url: string; available: boolean; designer_application_status: 'none' | 'pending' | 'approved' | 'declined'; designer_application_reviewed_at: string | null };
 export type Project = { id: string; title: string; service: string; brief: string; requirements: Record<string, string>; client_id: string; designer_id: string | null; status: string; due_date: string | null; version: number; created_at: string; updated_at: string };
 export type Comment = { id: string; author_id: string; body: string; internal: boolean; created_at: string };
 export type Task = { id: string; title: string; done: boolean };

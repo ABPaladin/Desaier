@@ -73,3 +73,12 @@ Academy enrollment and payments are not inferred from the concept document. Acad
 - [x] Fixed an observed scroll-animation hydration warning by controlling paused Web Animations rather than mutating server-rendered style attributes.
 - [x] Lint, TypeScript, production build, 20 authorization/application tests, all-role navigation/login/logout checks and targeted sculpture/motion/responsive checks passed. Reviewed desktop, mobile and three animation poses.
 - Production push and automatic Vercel rollout explicitly authorized by the owner. Previous successful production baseline: `2d3f8d5805f476e100a0f8deca8af7c3dc936dbb`, Vercel project `desaier-cjyd`. Verify this exact target and canonical homepage after push; retain the baseline for rollback if a serious regression appears.
+- [x] Commit `83bbaed325ec422b57b7025f06c96211d0201f9d` pushed to main. Canonical deployment succeeded; production desktop/mobile sculpture, homepage, login form, navigation, health 200 and anonymous workspace 401 verified without account mutations.
+
+## November 26 — designer applications (verified locally)
+
+- [x] Owner selected operator-approved applications. Added Client / Designer signup, persistent pending/declined status, operator approval/refusal and designer access after approval.
+- [x] New migration preserves existing roles, original migration and RLS policies. Metadata cannot grant staff access; project-history restrictions remain enforced.
+- [x] Lint, TypeScript, production build, 22 tests, signup/review browser checks, all-role navigation and full agency workflow passed. Updated desktop/mobile screenshots inspected.
+- [x] Read-only production preflight and dry run: one new migration proposed; no active operator yet. Exact target, hash, effects and rollout order in [DESIGNER_APPLICATIONS.md](DESIGNER_APPLICATIONS.md).
+- [ ] Authorize this exact production migration per DATABASE_ACTIVATION.md. No schema change or push for this milestone yet. Apply/verify migration before frontend deployment, then verify live email/approval with designated accounts.

@@ -2,7 +2,7 @@
 // the actual migration and RLS in PostgreSQL. Never deploy or use real credentials.
 import http from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { applyMigrations } from './migrations.mjs';
 import { PGlite } from '@electric-sql/pglite';
 
 const db = new PGlite();
@@ -18,7 +18,7 @@ await db.exec(`
   alter table storage.objects enable row level security;
   grant select,insert,update,delete on storage.objects to authenticated;
 `);
-await db.exec(await readFile(new URL('../../supabase/migrations/202611200001_agency.sql', import.meta.url), 'utf8'));
+await applyMigrations(db);
 const users = new Map(), sessions = new Map(), refreshTokens = new Map(), uploads = new Map();
 for (const [index, role] of ['client', 'other', 'designer', 'operator'].entries()) {
   const id = `20000000-0000-4000-8000-00000000000${index + 1}`;
@@ -54,6 +54,17 @@ const server = http.createServer(async (req, res) => {
     const body = req.headers['content-type']?.startsWith('application/json') && bytes.length ? JSON.parse(bytes) : {};
     const token = req.headers.authorization?.replace('Bearer ', '');
     let user = sessions.get(token);
+    if (url.pathname === '/auth/v1/signup') {
+      if (users.has(body.email)) return send(res, 200, { user: { identities: [] } });
+      const id = randomUUID();
+      // Fixture auto-confirms email; production confirmation remains Supabase-owned.
+      const created = { id, email: body.email, role: 'authenticated', aud: 'authenticated', email_confirmed_at: new Date().toISOString(), user_metadata: body.data || {}, created_at: new Date().toISOString() };
+      const provision = queue.then(() => db.query('insert into auth.users(id,raw_user_meta_data) values($1,$2)', [id, JSON.stringify(body.data || {})]));
+      queue = provision.catch(() => {});
+      await provision;
+      users.set(body.email, created);
+      return send(res, 200, { user: created, session: null });
+    }
     if (url.pathname === '/auth/v1/token') {
       const refreshing = url.searchParams.get('grant_type') === 'refresh_token';
       user = refreshing ? refreshTokens.get(body.refresh_token) : users.get(body.email);

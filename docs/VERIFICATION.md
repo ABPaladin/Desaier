@@ -121,3 +121,13 @@ Scroll storytelling now uses paused Web Animations whose current time follows sc
 Passed lint, TypeScript, production build, 20 application/PostgreSQL authorization tests, `navigation-browser.js` for all roles and `refinement-motion-browser.js` for actual changing geometry, timeline pause/resume continuity, offscreen suspension, initial/live reduced motion, four viewport widths, portfolio expansion and no hydration/page errors. Existing motion regression checks also passed. Auth tests use the isolated local provider and actual RLS, not customer accounts. Desktop/mobile and animation pose screenshots are `artifacts/silk-*.png`.
 
 Deployment is authorized through the existing GitHub `main` branch and Vercel project `desaier-cjyd`. The separate legacy Vercel project named `desaier` already reports failure for the prior commit; it is not the requested production target and its configuration is left alone. Before rollout, the canonical production target reports success for `2d3f8d5`. Post-push acceptance checks must confirm the new `svg[data-sculpture="silk"]`, homepage responsiveness, configured login form, anonymous workspace denial and the matching Vercel commit status.
+
+## November 26 — designer applications
+
+Passed lint, TypeScript, configured production build and all 22 tests. Authorization checks cover existing-account preservation, hostile signup metadata, anonymous/client/designer denial of approval, direct-write denial, approval/refusal, stale decisions, inactive applicants and project-history restrictions. Both migrations run in PostgreSQL; the original migration is unchanged.
+
+`tests/designer-applications-browser.js` passed: both signup choices, confirmation notice, deliberate login, persistent pending status, self-approval/operator-signup rejection, operator approval/refusal, role redirect and creative-profile editing. Desktop/mobile registration, pending and review screenshots in `artifacts/designer-*` were inspected; no horizontal overflow.
+
+`tests/navigation-browser.js` and `tests/mvp-browser.js` passed: all-role identity/login/refresh, keyboard/touch menus, outside click, logout/tab synchronization and the complete project/delivery workflow. No browser page errors. Auth/Storage and email confirmation use local fixtures; PostgreSQL authorization uses real migrations. Hosted email delivery and real-account approval remain unverified.
+
+Production read-only preflight: original migration only, new columns/RPC absent, RLS and Auth trigger enabled, zero active operators. CLI dry run proposes only `202611260001_designer_applications.sql`. No production schema/account mutation or push. See [DESIGNER_APPLICATIONS.md](DESIGNER_APPLICATIONS.md) for the exact authorization and rollout.
