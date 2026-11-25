@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
-import { validBackendConfig } from './src/lib/backend-config';
+import { backendConfigIssues } from './src/lib/backend-config';
 
+const backendIssues = backendConfigIssues(process.env);
 if ([process.env.APP_ORIGIN, process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY].some(Boolean)
-  && !validBackendConfig(process.env)) {
-  throw new Error('Invalid backend configuration. Set all three backend variables, canonical HTTPS origins and a publishable/anon key. See docs/ONLINE_SETUP.md.');
+  && backendIssues.length) {
+  throw new Error(`Invalid backend configuration:\n- ${backendIssues.join('\n- ')}\nFix these variables in the correct Vercel project/environment and redeploy. See docs/ONLINE_SETUP.md. Values are intentionally omitted.`);
 }
 
 const nextConfig: NextConfig = {

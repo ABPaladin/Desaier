@@ -64,6 +64,12 @@ Valorile confirmate pentru proiectul actual (25 noiembrie):
 
 Nu adăuga slash final la primele două valori. Site URL din Supabase Auth trebuie să fie tot `https://desaier-cjyd.vercel.app`. După salvare în Vercel, redeploy Production; nu este necesară reaplicarea migrației. Health-ul actual este 503 `missing_or_invalid`, deci conectarea aplicației nu este încă finalizată. Cheile AI sunt opționale pentru activarea fluxului de bază.
 
+### Dacă buildul afișează „Invalid backend configuration”
+
+Verifică proiectul **desaier-cjyd**, nu proiectul separat **desaier**; ambele au primit deploymenturi din GitHub. Cele trei variabile trebuie să existe în **Production** pentru deploymentul principal (sau în Preview pentru un deployment Preview). Valorile URL nu trebuie să conțină slash final, ghilimele, spații ori calea `/dashboard/project/...`. Cheia trebuie să fie valoarea publishable `sb_publishable_...` sau legacy anon JWT din proiectul corect; numele ei în aplicație este exact `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, chiar dacă o integrare a creat `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+
+Logurile actualizate numesc fiecare variabilă lipsă/nevalidă și nu afișează valorile. Corectează în dashboard, salvează și redeploy. Nu șterge toate variabilele pentru a obține un build verde: aceasta ar reveni la demo cu accesul real dezactivat. Eroarea de build nu necesită refacerea bazei sau reaplicarea migrației.
+
 Deschide proiectul **existent** din [Vercel Dashboard](https://vercel.com/dashboard):
 
 1. Settings → Git: repository `ABPaladin/Desaier`, production branch `main`.

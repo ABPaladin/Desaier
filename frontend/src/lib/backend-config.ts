@@ -10,10 +10,7 @@ function safeOrigin(value: string | undefined, hosted: boolean) {
   } catch { return false; }
 }
 
-/** Reject privileged keys and invalid origins without returning configuration values. */
-export function validBackendConfig(env: Environment) {
-  const hosted = env.VERCEL === '1';
-  if (!safeOrigin(env.APP_ORIGIN, hosted) || !safeOrigin(env.NEXT_PUBLIC_SUPABASE_URL, hosted)) return false;
+function allowedPublicKey(env: Environment, hosted: boolean) {
   const key = env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
   if (/^sb_publishable_[A-Za-z0-9_-]+$/.test(key)) return true;
   // This exact key is used only by the isolated local integration harness.
@@ -26,4 +23,27 @@ export function validBackendConfig(env: Environment) {
     // This is configuration validation, not JWT authentication or signature verification.
     return JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8')).role === 'anon';
   } catch { return false; }
+}
+
+/** Safe for build logs: return variable names and instructions, never supplied values. */
+export function backendConfigIssues(env: Environment): string[] {
+  const hosted = env.VERCEL === '1';
+  const issues: string[] = [];
+  for (const name of ['APP_ORIGIN', 'NEXT_PUBLIC_SUPABASE_URL'] as const) {
+    if (!env[name]) issues.push(`${name}: missing. Set it in the Vercel environment being deployed.`);
+    else if (!safeOrigin(env[name], hosted)) issues.push(`${name}: invalid origin. Use HTTPS with no trailing slash, path, query, credentials, quotes or surrounding whitespace (HTTP loopback is allowed only locally).`);
+  }
+  if (!env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+    const alias = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ? ' NEXT_PUBLIC_SUPABASE_ANON_KEY is present, but this app reads NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY; copy the publishable/anon value under that exact name.' : '';
+    issues.push(`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: missing. Set the project publishable key.${alias}`);
+  } else if (!allowedPublicKey(env, hosted)) {
+    issues.push('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: invalid public key. Use sb_publishable_... or a legacy anon JWT, without quotes or whitespace; never use a secret/service_role key.');
+  }
+  return issues;
+}
+
+/** Reject privileged keys and invalid origins without returning configuration values. */
+export function validBackendConfig(env: Environment) {
+  return backendConfigIssues(env).length === 0;
 }

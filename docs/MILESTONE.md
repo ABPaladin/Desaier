@@ -51,6 +51,7 @@ Final deadline: **November 25, 2026**. Continue the existing project; centrally 
 - [x] Re-ran 19 local tests, lint, TypeScript and production build. Verified Vercel homepage is reachable at `https://desaier-cjyd.vercel.app`; health correctly reports 503 `missing_or_invalid`.
 - [ ] Configure Vercel Production variables and redeploy, then test real signup/confirmation/recovery, operator bootstrap and cross-role workflow. Keep Git push pending until Supabase GitHub configuration-deployment behavior is understood; only CLI was authorized for this migration.
 - [ ] Final integrated production smoke, permissions and visual review.
+- [x] Improved configuration build errors to identify each missing/invalid variable without exposing values. Twenty tests, lint, TypeScript and build pass; reproduced an invalid-origin build and verified its specific diagnostic. Actual Vercel values still require correction in the dashboard.
 - [ ] Commit/push release state, verify Vercel deployment and hand over operator setup/runbook.
 
 Academy enrollment and payments are not inferred from the concept document. Academy remains Coming Soon; no payment flow has been added.
