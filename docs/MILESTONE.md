@@ -102,3 +102,9 @@ Academy enrollment and payments are not inferred from the concept document. Acad
 - Lint, TypeScript, production build and 22 tests passed. Targeted Playwright verified render/animation, resolution cap, pause/resume, offscreen suspension, reduced motion, context-loss fallback, hover delay/light, mobile navigation and no page errors. Inspected desktop/mobile model and lit Academy screenshots. Test: tests/sculpture-3d-browser.js uses current browser origin and supports local/production read-only checks.
 - Renderer implementation follows conservative resource sizing and explicit GPU cleanup guidance: https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices . Existing SVG motion test now explicitly exercises the fallback.
 - Expanded registration remains a separate unfinished request, awaiting whether clients also require operator approval. No authentication, schema or AI configuration changes in this visual milestone.
+
+## November 27 — restore SVG at owner request
+
+- Owner rejected the WebGL model and requested the previous visual. Restored LivingSculpture and SVG lifecycle from 27780ff, removed the GPU renderer and its overrides, and restored SVG-targeted browser tests. Preserved the separately requested delayed Academy illumination, corrected gradient and Academy positioning.
+- Lint, TypeScript, production build, 22 tests and desktop/mobile visual-seams browser checks passed. SVG morph, pause, reduced motion and symbol containment verified; desktop capture inspected.
+- Registration status clarified to owner: extended profile collection is NOT implemented. Existing signup still only collects name/email/password and Client/Designer choice, with operator-approved designer applications. Full pre-approval profile review and client details remain outstanding; no schema or authentication changes in this restoration.

@@ -1,6 +1,6 @@
 'use client';
 import { Pause, Play } from 'lucide-react';
-import { Sculpture3D } from '@/components/sculpture-3d';
+import { SilkSculpture } from '@/components/silk-sculpture';
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -103,7 +103,7 @@ export function LivingSculpture() {
       const stopped = paused || !onstage || document.hidden || preference.matches;
       el!.classList.toggle('offstage', !onstage);
       el!.classList.toggle('tab-hidden', document.hidden);
-      if (stopped || el!.querySelector('.sculpture-3d[data-ready]')) svg!.pauseAnimations();
+      if (stopped) svg!.pauseAnimations();
       else {
         if (!started.current) {
           svg!.querySelectorAll<SVGAnimationElement>('animate').forEach(animation => animation.beginElement());
@@ -115,13 +115,11 @@ export function LivingSculpture() {
     }
     const observer = new IntersectionObserver(([entry]) => { onstage = entry.isIntersecting; sync(); });
     observer.observe(el);
-    const rendererObserver = new MutationObserver(sync);
-    rendererObserver.observe(el, { subtree: true, attributes: true, attributeFilter: ['data-ready'] });
     sync();
     document.addEventListener('visibilitychange', sync);
     preference.addEventListener('change', sync);
     return () => {
-      observer.disconnect(); rendererObserver.disconnect(); svg.pauseAnimations();
+      observer.disconnect(); svg.pauseAnimations();
       document.removeEventListener('visibilitychange', sync);
       preference.removeEventListener('change', sync);
     };
@@ -137,7 +135,7 @@ export function LivingSculpture() {
       }}
       onPointerLeave={e => { e.currentTarget.style.setProperty('--drift-x', '0px'); e.currentTarget.style.setProperty('--drift-y', '0px'); }}>
       <div className="aurora" />
-      <div className="sculpture"><div className="ribbon-body"><Sculpture3D paused={paused}/></div></div>
+      <div className="sculpture"><div className="ribbon-body"><SilkSculpture/></div></div>
       <span className="object-label">FIG. 01 / A FORM IN FLUX</span>
     </div>
     <button className="motion-toggle" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? 'Resume motion' : 'Pause motion'} {paused ? <Play size={14} aria-hidden="true"/> : <Pause size={14} aria-hidden="true"/>}</button>

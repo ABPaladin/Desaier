@@ -6,10 +6,9 @@ async (page) => {
   try {
     await tab.goto('http://localhost:3004');
     const svg = tab.locator('.silk-sculpture'); await svg.waitFor();
-    await tab.locator('.sculpture-3d[data-ready]').waitFor();
-    const initial = Number(await tab.locator('.sculpture-3d').getAttribute('data-frame'));
+    const initial = await tab.locator('[data-sculpture-surface]').evaluate(p => p.getBBox().width);
     await tab.waitForTimeout(2500);
-    check(Number(await tab.locator('.sculpture-3d').getAttribute('data-frame')) > initial, 'Morph did not move');
+    check(Math.abs((await tab.locator('[data-sculpture-surface]').evaluate(p => p.getBBox().width)) - initial) > .1, 'Morph did not move');
     await tab.screenshot({ path: 'artifacts/hero-seam-desktop.png' });
     await tab.getByRole('button', { name: 'Pause motion' }).click();
     check(await svg.evaluate(s => s.animationsPaused()), 'Pause failed');
