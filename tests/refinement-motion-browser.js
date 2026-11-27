@@ -1,4 +1,11 @@
 async (page) => {
+  // Exercise the retained SVG fallback; WebGL lifecycle has its own test.
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function(type, ...args) {
+      return type === 'webgl' ? null : original.call(this, type, ...args);
+    };
+  });
   const ensure = (value, message) => { if (!value) throw Error(message); };
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));

@@ -11,7 +11,8 @@ async (page) => {
     ensure(response.status() === 200, 'Homepage unavailable');
     await tab.locator('svg[data-sculpture="silk"]').waitFor();
     await tab.waitForTimeout(1200);
-    ensure(await tab.locator('.silk-sculpture').evaluate(svg => svg.getCurrentTime() > 0 && !svg.animationsPaused()), 'Production morph inactive');
+    await tab.locator('.sculpture-3d[data-ready]').waitFor();
+    ensure(Number(await tab.locator('.sculpture-3d').getAttribute('data-frame')) > 0, 'Production 3D morph inactive');
     await tab.screenshot({ path: 'artifacts/silk-production-desktop.png' });
     await tab.getByRole('button', { name: 'Pause motion' }).click();
     ensure(await tab.locator('.silk-sculpture').evaluate(svg => svg.animationsPaused()), 'Production pause failed');

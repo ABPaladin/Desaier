@@ -92,3 +92,14 @@ nav .profile-panel a::after { display: none; }
   .manifesto-seal { transform: rotate(-8deg); }
   .process::before { transform: none; }
 }
+
+/* GPU sculpture: keep the server-rendered SVG until the renderer is ready. */
+.sculpture .ribbon-body { animation: none; }
+.sculpture .sculpture-3d { position: relative; inset: auto; border-radius: 0; background: none; box-shadow: none; animation: none; aspect-ratio: 1; }
+.sculpture-3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.sculpture-3d[data-ready] canvas { opacity: 1; }
+.sculpture-3d[data-ready] > svg { visibility: hidden; }
+.academy:hover > span { opacity: 1; }
+.academy > span > .brand-mark { color: #583276; opacity: .85; filter: drop-shadow(0 0 0 transparent); transition: color .9s ease, filter 1.2s ease, opacity .9s ease; transition-delay: 0s; }
+.academy:is(:hover, :focus-within) > span > .brand-mark { color: #f5dcff; opacity: 1; filter: drop-shadow(0 0 20px #bd65e5aa) drop-shadow(0 0 45px #fff0ff66); transition-delay: .18s; }
+@media (prefers-reduced-motion: reduce) { .academy > span > .brand-mark { transition: none; } }
