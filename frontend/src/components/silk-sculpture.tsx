@@ -2,18 +2,18 @@
 // so the browser can interpolate the actual silhouette and aperture smoothly.
 const contours = [
   'M 466 126 C 348 84 174 188 153 331 C 130 478 243 582 386 560 C 528 538 586 397 548 272 C 529 206 504 149 466 126 Z',
-  'M 458 174 C 339 81 150 184 146 331 C 141 487 271 562 416 535 C 561 508 587 357 535 261 C 510 215 493 193 458 174 Z',
+  'M 458 174 C 325 64 126 214 146 354 C 164 489 291 575 437 513 C 561 460 587 339 535 261 C 510 215 493 193 458 174 Z',
   'M 485 151 C 369 85 202 170 167 308 C 129 450 269 580 412 548 C 558 515 567 373 550 271 C 539 208 522 173 485 151 Z',
 ];
 const apertures = [
   'M 408 226 C 452 224 474 292 449 365 C 423 442 355 491 302 465 C 251 440 273 363 308 308 C 340 258 375 228 408 226 Z',
-  'M 436 248 C 480 270 465 340 410 391 C 355 440 309 466 281 434 C 248 398 292 354 341 305 C 379 267 409 234 436 248 Z',
+  'M 436 248 C 486 282 454 349 397 395 C 343 437 302 447 281 414 C 258 378 303 350 341 305 C 379 267 409 234 436 248 Z',
   'M 416 231 C 461 242 469 296 452 355 C 431 425 375 485 320 463 C 264 441 275 370 310 316 C 343 265 382 223 416 231 Z',
 ];
 const surfaces = contours.map((contour, i) => `${contour} ${apertures[i]}`);
 
 function Morph({ poses }: { poses: string[] }) {
-  return <animate attributeName="d" values={[...poses, poses[0]].join(';')} dur="21s" begin="indefinite" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.67;1" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1"/>;
+  return <animate attributeName="d" values={[...poses, poses[0]].join(';')} dur="15s" begin="indefinite" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.33;0.67;1" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1"/>;
 }
 
 export function SilkSculpture() {

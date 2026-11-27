@@ -85,3 +85,11 @@ Academy enrollment and payments are not inferred from the concept document. Acad
 - [x] Pushed `88d5a84657c8df6ff0a66bfc93d8c40b1c3acd25` to main. Canonical Vercel deployment [BZNjRvKxrrhLf3rQhTa1nw9HjVAj](https://vercel.com/a-bs-projects-4445252c/desaier-cjyd/BZNjRvKxrrhLf3rQhTa1nw9HjVAj) succeeded. Read-only production browser checks passed homepage/sculpture, enabled login/signup, Client/Designer choice/approval notice, desktop/mobile navigation, no overflow or page/hydration errors, health 200 and anonymous workspace 401. Production screenshots inspected.
 - [ ] Real-account email confirmation and designer approval acceptance with owner-designated accounts; owner operator bootstrap remains necessary (zero active operators at release). Local end-to-end coverage passed, but no live accounts were created for verification.
 - Continuation context and file/test pointers: [CONTINUE_FRONTEND.md](CONTINUE_FRONTEND.md). Subsequent changes in this release handoff are documentation, read-only smoke test and screenshots only.
+
+## November 27 — hero lighting and Academy composition
+
+- Expanded the animated light layer across the hero and feathered its edges to remove the vertical gradient seam. Centered the Academy SVG explicitly, removed inherited glyph line-box sizing, and reserved a separate mobile area for it.
+- Increased sculpture path deformation and shortened morph timing to 15 seconds; independent 13-second float changes orientation and proportions gently. Pause and reduced-motion behavior retained.
+- Lint, TypeScript, build, 22 tests and tests/visual-seams-browser.js passed. Desktop/mobile screenshots inspected in artifacts/hero-seam-* and academy-position-*.
+- Next requested work: collect complete designer/client information during registration, show it to operators before approval, and retain profile forms only for subsequent edits without reapproval. Pending user clarification: should client accounts also require approval, or only designer applications as currently? No registration/schema changes made in this milestone.
+- AI code inspected: Responses API adapter, operator-only brief analysis and candidate suggestions, internal results and database-enforced hourly quota exist. Production OPENAI_API_KEY/OPENAI_MODEL availability and a real request remain unverified; no paid provider call made.

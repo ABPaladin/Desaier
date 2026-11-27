@@ -25,13 +25,13 @@ nav .profile-panel a::after { display: none; }
 .hero { background: radial-gradient(ellipse at 85% 32%, #54205b60, transparent 52%), radial-gradient(ellipse at 48% 100%, #43247745, transparent 65%), var(--ink); }
 .hero em { color: #ead5fb; }
 .motion-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
-.living-field { --light-x: 65%; }
-.aurora { inset: 8% -5% 8% 0; width: auto; height: auto; border-radius: 0; background: radial-gradient(ellipse at var(--light-x) 48%, #a86fce20, transparent 64%); animation-duration: 17s; }
+.living-field { --light-x: 72%; inset: 0; }
+.aurora { inset: -15%; width: auto; height: auto; border-radius: 50%; background: radial-gradient(ellipse at var(--light-x) 48%, #a86fce25, #a86fce00 65%); mask-image: radial-gradient(ellipse, #000 35%, transparent 70%); animation-duration: 17s; pointer-events: none; }
 .sculpture { top: 28px; right: 0; width: min(52vw, 750px); }
-.sculpture .ribbon-body { animation: silk-float 16s ease-in-out infinite alternate; }
+.sculpture .ribbon-body { transform-origin: 50% 48%; animation: silk-float 13s ease-in-out infinite; }
 .ribbon-body svg { animation: none; filter: drop-shadow(0 32px 24px #09031160); }
 .object-label { bottom: 18%; color: #c3acd6; }
-@keyframes silk-float { from { transform: translateY(7px) rotate(-3deg); } to { transform: translateY(-9px) rotate(2deg); } }
+@keyframes silk-float { 0%, 100% { transform: translate(0, 8px) rotate(-6deg) scale(1); } 35% { transform: translate(-10px, -14px) rotate(5deg) scale(1.035, .97); } 70% { transform: translate(8px, -3px) rotate(-2deg) scale(.98, 1.03); } }
 @media (max-width: 800px) {
   .sculpture { width: 440px; max-width: 112vw; right: -8%; top: 16px; }
 }
@@ -61,7 +61,15 @@ nav .profile-panel a::after { display: none; }
 .three small { color: #d1b5e9; }
 .three article:nth-child(2) small::before { background: var(--orchid); }
 .academy { background: radial-gradient(ellipse at 85% 30%, #e6b9e4, transparent 65%), #b395ee; }
-.academy > span { animation: none; transition: opacity .5s; }
+.academy > span { position: absolute; display: grid; place-items: center; width: clamp(180px, 25vw, 330px); height: auto; aspect-ratio: 1; top: 50%; right: 7%; transform: translateY(-50%); font-size: 0; line-height: 0; animation: none; pointer-events: none; }
+.academy > span > .brand-mark { display: block; width: 100%; height: 100%; }
+.academy > :not(span) { position: relative; z-index: 1; max-width: 65%; }
+@media (max-width: 800px) {
+  .living-field { inset: 140px 0 175px; }
+  .academy { padding-bottom: 210px; }
+  .academy > :not(span) { max-width: 100%; }
+  .academy > span { width: 150px; height: 150px; top: auto; bottom: 30px; right: 7%; transform: none; opacity: .55; }
+}
 .pill:hover { background: #e4c4f6; color: var(--ink); box-shadow: inset 0 0 0 1px #fff9, 0 8px 30px #b55cb830; }
 @media (min-width: 801px) and (max-width: 900px) {
   .menu { display: block; background: none; border: 0; color: #fff; }
